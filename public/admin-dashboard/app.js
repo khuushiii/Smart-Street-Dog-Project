@@ -80,12 +80,8 @@ async function loadLiveStatsAndDogs() {
 }
 
 function renderLiveAlertsInboxTable(alerts) {
-  const alertsTbody = document.querySelector('.data-table tbody');
+  const alertsTbody = document.getElementById('alertsInboxTableBody');
   if (!alertsTbody || !Array.isArray(alerts) || alerts.length === 0) return;
-  
-  // Only update if on alerts-inbox page or alerts tab
-  const isAlertsPage = window.location.pathname.includes('alerts-inbox') || document.getElementById('alerts-inbox');
-  if (!isAlertsPage) return;
 
   alertsTbody.innerHTML = alerts.map(a => {
     const sev = (a.severity || 'warning').toLowerCase();
@@ -1143,37 +1139,9 @@ function toggleGeofenceRadius() {
    -------------------------------------------------------------------------- */
 function loadStoredCitizenIncidents() {
   try {
-    const raw = localStorage.getItem("smartdog_incidents");
-    if (!raw) return;
-    const incidents = JSON.parse(raw);
-    if (!Array.isArray(incidents) || incidents.length === 0) return;
-
-    // Prepend table rows on alerts-inbox.html
-    const alertsTable = document.querySelector('.data-table tbody');
-    if (alertsTable) {
-      incidents.forEach(inc => {
-        const tr = document.createElement('tr');
-        tr.style.background = 'rgba(239, 68, 68, 0.08)';
-        tr.innerHTML = `
-          <td><span class="pill-badge critical-pill">CITIZEN SOS</span></td>
-          <td>${inc.category === 'injured' ? 'Injured / Limping Animal' : 'Citizen Emergency Distress'}</td>
-          <td><strong>${inc.dogCode} (${inc.dogName})</strong></td>
-          <td>${inc.notes} <br><small style="opacity:0.75;">By: ${inc.reporterName} • ${inc.reporterPhone}</small></td>
-          <td>${inc.timestamp}</td>
-          <td><button class="btn-primary-xs" onclick="alert('Dispatching unit for Ticket #${inc.id}\\nDog: ${inc.dogName} (${inc.dogCode})\\nArea: ${inc.area}\\nReporter: ${inc.reporterName} (${inc.reporterPhone})');">Dispatch Unit</button></td>
-        `;
-        alertsTable.insertBefore(tr, alertsTable.firstChild);
-      });
-    }
-
-    // 3. Show notification toast on dashboard
-    if (incidents.length > 0 && !sessionStorage.getItem('smartdog_banner_dismissed')) {
-      const banner = document.createElement('div');
-      banner.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#784920;color:#fff;padding:12px 18px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.35);z-index:9999;display:flex;align-items:center;gap:12px;font-size:13px;font-family:sans-serif;border:1px solid #d4a876;';
-      banner.innerHTML = `<span>🚨 <strong>${incidents.length} New Citizen Report(s)</strong> received from Single Dog page</span><button style="background:transparent;border:none;color:#fff;font-weight:bold;cursor:pointer;font-size:16px;margin-left:8px;" onclick="this.parentElement.remove();sessionStorage.setItem('smartdog_banner_dismissed','true');">✕</button>`;
-      document.body.appendChild(banner);
-    }
+    localStorage.removeItem("smartdog_incidents");
+    sessionStorage.setItem('smartdog_banner_dismissed', 'true');
   } catch (e) {
-    console.error("Error loading citizen incidents", e);
+    console.warn("Storage cleanup error", e);
   }
 }
