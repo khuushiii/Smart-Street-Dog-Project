@@ -361,17 +361,25 @@
                 <tbody id="alertsInboxTableBody">
                   <tr>
                     <td><span class="pill-badge critical-pill">CRITICAL</span></td>
+                    <td>High Temperature / Fever</td>
+                    <td><strong>DOG190 (Rocky)</strong></td>
+                    <td>Fever detected: 41.2°C</td>
+                    <td>2 mins ago</td>
+                    <td><button class="btn-primary-xs" onclick="openAlertModal('DOG190', 'High Temperature / Fever', 'Fever detected: 41.2°C')">Inspect Audio</button></td>
+                  </tr>
+                  <tr>
+                    <td><span class="pill-badge critical-pill">CRITICAL</span></td>
                     <td>Distress Barking</td>
                     <td><strong>DOG042 (Moti)</strong></td>
-                    <td>ResNet18 Mel-Spectrogram: Pain Bark (94.8% prob)</td>
-                    <td>2 mins ago</td>
+                    <td>Pain Bark (94.8% prob)</td>
+                    <td>10 mins ago</td>
                     <td><button class="btn-primary-xs" onclick="openAlertModal('DOG042', 'Distress Barking', 'INMP441 microphone captured high frequency distress pattern.')">Inspect Audio</button></td>
                   </tr>
                   <tr>
                     <td><span class="pill-badge warning-pill">WARNING</span></td>
                     <td>High Temperature / Fever</td>
                     <td><strong>DOG117 (Sheru)</strong></td>
-                    <td>Random Forest Classifier: Trembling/Fever (40.2°C)</td>
+                    <td>Trembling / Fever (40.2°C)</td>
                     <td>15 mins ago</td>
                     <td><button class="btn-outline-xs" onclick="openAlertModal('DOG117', 'Fever', 'Collar temperature sensor read elevated 40.2°C.')">Inspect Motion</button></td>
                   </tr>
@@ -379,9 +387,17 @@
                     <td><span class="pill-badge warning-pill">WARNING</span></td>
                     <td>Limping Anomaly</td>
                     <td><strong>DOG089 (Kalu)</strong></td>
-                    <td>MPU-6050 6-Axis: Gait asymmetry detected (RMS > 3.4)</td>
+                    <td>Gait asymmetry detected (RMS > 3.4)</td>
                     <td>42 mins ago</td>
                     <td><button class="btn-outline-xs" onclick="openAlertModal('DOG089', 'Limping Anomaly', 'Significant stride variation captured.')">Inspect Motion</button></td>
+                  </tr>
+                  <tr>
+                    <td><span class="pill-badge critical-pill">CRITICAL</span></td>
+                    <td>Geofence Breach</td>
+                    <td><strong>DOG099 (Tyson)</strong></td>
+                    <td>Out of safe boundary (Zone B). Distance: 4.2 km</td>
+                    <td>1 hr ago</td>
+                    <td><button class="btn-primary-xs" onclick="openAlertModal('DOG099', 'Geofence Breach', 'Out of safe boundary (Zone B). Distance: 4.2 km')">Inspect Audio</button></td>
                   </tr>
                 </tbody>
               </table>
