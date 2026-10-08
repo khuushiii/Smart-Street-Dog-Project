@@ -2,6 +2,7 @@ import { useState } from "react"
 import { DogProfile } from "../types"
 import { TRANSLATIONS } from "../data/translations"
 import { Language } from "../types"
+import { reportIncident } from "../api"
 
 interface Props {
   dog: DogProfile
@@ -22,6 +23,28 @@ export function EmergencyModal({ dog, lang, onClose }: Props) {
     e.preventDefault()
     const generatedId = `MGM-${Math.floor(1000 + Math.random() * 9000)}`
     setTicketId(generatedId)
+
+    // Persist incident directly into Supabase via FastAPI backend
+    reportIncident({
+      dog_id: dog.id,
+      dog_name: dog.name,
+      dog_code: dog.code,
+      category,
+      location: dog.area,
+      description: notes || "Distress / injury reported via citizen single-dog page",
+      reporter_name: name || "Anonymous Citizen",
+      reporter_phone: phone || "Not Provided",
+      lat: dog.coordinates?.lat,
+      lng: dog.coordinates?.lng,
+    })
+      .then((res) => {
+        if (res && res.ticket_id) {
+          setTicketId(res.ticket_id)
+        }
+      })
+      .catch((err) => {
+        console.warn("Backend report incident offline fallback:", err)
+      })
 
     // Save incident to localStorage for admin dashboard reflection
     try {

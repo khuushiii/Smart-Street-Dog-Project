@@ -8,6 +8,7 @@ import { QrScannerModal } from "./components/QrScannerModal"
 import { VetDetailsModal } from "./components/VetDetailsModal"
 import { AdminPortal } from "./components/AdminPortal"
 import { AdminLoginModal } from "./components/AdminLoginModal"
+import { fetchLiveDogs } from "./api"
 
 // ─── design tokens ────────────────────────────────────────────────────────────
 const T = {
@@ -1013,8 +1014,38 @@ export default function App() {
   const [dark] = useState(false)
   const [lang] = useState<Language>("en")
   const [viewMode, setViewMode] = useState<ViewMode>("citizen")
+  const [dogs, setDogs] = useState<DogProfile[]>(CAMPUS_DOGS)
   const [activeDog, setActiveDog] = useState<DogProfile>(CAMPUS_DOGS[0])
   const [isSyncing, setIsSyncing] = useState(false)
+
+  // Live Supabase integration via FastAPI backend
+  useEffect(() => {
+    fetchLiveDogs()
+      .then((liveDogs) => {
+        if (liveDogs && liveDogs.length > 0) {
+          const enriched = liveDogs.map((d, index) => {
+            const fallback =
+              CAMPUS_DOGS.find(
+                (c) => c.code.toLowerCase() === d.code.toLowerCase() || c.id === d.id
+              ) || CAMPUS_DOGS[index % CAMPUS_DOGS.length]
+            return {
+              ...fallback,
+              ...d,
+              photo: d.photo && d.photo.trim() !== "" ? d.photo : fallback.photo,
+              coordinates: d.coordinates?.lat ? d.coordinates : fallback.coordinates,
+              vetRecord: d.vetRecord || fallback.vetRecord,
+              trailPoints:
+                d.trailPoints && d.trailPoints.length > 0 ? d.trailPoints : fallback.trailPoints,
+            }
+          })
+          setDogs(enriched)
+          setActiveDog(enriched[0])
+        }
+      })
+      .catch((err) => {
+        console.warn("Backend live dogs fetch fallback:", err)
+      })
+  }, [])
 
   // Modals state
   const [emergencyModalOpen, setEmergencyModalOpen] = useState(false)
@@ -1073,7 +1104,7 @@ export default function App() {
       {/* Conditional View: Citizen View vs. Municipal Admin Portal */}
       {viewMode === "admin" ? (
         <AdminPortal
-          dogs={CAMPUS_DOGS}
+          dogs={dogs}
           activeDog={activeDog}
           onSelectDog={(d) => setActiveDog(d)}
           lang={lang}
@@ -1149,7 +1180,7 @@ export default function App() {
 
       {qrScannerModalOpen && (
         <QrScannerModal
-          dogs={CAMPUS_DOGS}
+          dogs={dogs}
           lang={lang}
           onSelectDog={(d) => setActiveDog(d)}
           onClose={() => setQrScannerModalOpen(false)}
