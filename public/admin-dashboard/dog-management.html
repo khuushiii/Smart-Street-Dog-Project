@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dog Management Directory | SmartDog System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="light-theme">
+
+  <div class="app-container">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-left">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+              <path d="M19 13c.3 0 .5-.1.7-.3l1.8-1.8c.4-.4.4-1 0-1.4l-1.4-1.4c-.4-.4-1-.4-1.4 0l-1.4 1.4c-.4.4-.4 1 0 1.4l.7.7-1.5 1.5c-.2.2-.3.4-.3.7v3h-2v-4c0-.6-.4-1-1-1H9.8l-1.2-2.4c-.2-.4-.6-.6-1-.6H5c-.6 0-1 .4-1 1s.4 1 1 1h2.1l1.4 2.7c.1.3.4.5.7.5H11v4H7.8c-.5-1.2-1.7-2-3-2-1.7 0-3 1.3-3 3s1.3 3 3 3c1.3 0 2.5-.8 3-2h8.4c.5 1.2 1.7 2 3 2 1.7 0 3-1.3 3-3s-1.3-3-3-3c-.4 0-.8.1-1.2.3V13z"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h2>SmartDog</h2>
+            <span>Identification System</span>
+          </div>
+        </div>
+        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Collapse/Expand Navigation">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" id="sidebarToggleIcon">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sidebar-menu-label">MAIN MENU</div>
+
+      <nav class="sidebar-nav">
+        <a href="index.html" class="nav-item" data-title="Dashboard">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+              <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+              <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+              <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+            </svg>
+          </span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+
+        <a href="city-map.html" class="nav-item" data-title="City Map">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+              <line x1="8" y1="2" x2="8" y2="18"/>
+              <line x1="16" y1="6" x2="16" y2="22"/>
+            </svg>
+          </span>
+          <span class="nav-label">City Map</span>
+        </a>
+
+        <a href="alerts-inbox.html" class="nav-item" data-title="Alerts Inbox">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </span>
+          <span class="nav-label">Alerts Inbox</span>
+          <span class="nav-badge">12</span>
+        </a>
+
+        <a href="dog-management.html" class="nav-item active" data-title="Dog Management">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2a5 5 0 0 1 5 5v3a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5z"/>
+              <path d="M19 11v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="22"/>
+            </svg>
+          </span>
+          <span class="nav-label">Dog Management</span>
+        </a>
+
+        <a href="register-dog.html" class="nav-item" data-title="Register Dog">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="16"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+          </span>
+          <span class="nav-label">Register Dog</span>
+        </a>
+
+      </nav>
+
+      <div class="sidebar-promo-card">
+        <div class="promo-dog-img-wrapper">
+          <img src="assets/realistic_dog.png" alt="Aurangabad Smart Dog Telemetry" class="promo-dog-img">
+        </div>
+        <h4>Together for Better Streets</h4>
+        <p>Monitor • Protect • Care</p>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-wrapper">
+      <header class="top-header">
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Search by Dog ID, name, area or breed...">
+        </div>
+        <div class="header-actions">
+          <div class="theme-toggle" id="themeToggleBtn">
+            <div class="toggle-track"><div class="toggle-thumb">☀️</div></div>
+          </div>
+          <div class="user-profile" title="Admin User Management">
+            <div class="avatar">AJ</div>
+            <div class="user-info"><span class="user-name">Ashish Joshi</span><span class="user-role">Municipal Admin</span></div>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+
+            <div class="profile-dropdown-menu">
+              <div class="dropdown-header-info">
+                <div style="font-weight: 700; color: var(--text-dark);">Ashish Joshi</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Municipal Admin · AMC Vet Dept</div>
+              </div>
+              <div style="border-top: 1px solid var(--border-light); margin: 6px 0;"></div>
+              <a href="/" target="_top" class="dropdown-item" style="color: #dc2626; font-weight: 700;">🚪 Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+
+
+      <div class="content-body">
+        <div class="page-title-row">
+          <div>
+            <h1 class="page-title">Municipal Dog Directory</h1>
+            <p class="page-subtitle">Complete registry of tracked dogs across Aurangabad Municipal Corporation</p>
+          </div>
+          <a href="register-dog.html" class="btn-primary">+ Register New Dog</a>
+        </div>
+
+        <div class="card">
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Collar ID</th>
+                  <th>Name</th>
+                  <th>Breed AI Classification</th>
+                  <th>Zone</th>
+                  <th>Vaccination</th>
+                  <th>Collar Battery</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="recentDogsTableBody">
+                <tr style="cursor: pointer;" onclick="openDogProfile('DOG251')">
+                  <td><span class="dog-id-pill">DOG251</span></td>
+                  <td>Tommy</td>
+                  <td>Indian Pariah</td>
+                  <td>N-8 CIDCO</td>
+                  <td><span class="status-indicator healthy">● Vaccinated</span></td>
+                  <td>94% 🔋</td>
+                  <td><button class="btn-tag-xs" onclick="event.stopPropagation(); openDogProfile('DOG251')">View QR Tag</button></td>
+                </tr>
+                <tr style="cursor: pointer;" onclick="openDogProfile('DOG250')">
+                  <td><span class="dog-id-pill">DOG250</span></td>
+                  <td>Bella</td>
+                  <td>Mixed mutt</td>
+                  <td>Waluj</td>
+                  <td><span class="status-indicator healthy">● Vaccinated</span></td>
+                  <td>82% 🔋</td>
+                  <td><button class="btn-tag-xs" onclick="event.stopPropagation(); openDogProfile('DOG250')">View QR Tag</button></td>
+                </tr>
+                <tr style="cursor: pointer;" onclick="openDogProfile('DOG249')">
+                  <td><span class="dog-id-pill">DOG249</span></td>
+                  <td>Max</td>
+                  <td>Indian spitz</td>
+                  <td>CIDCO N-2</td>
+                  <td><span class="status-indicator healthy">● Vaccinated</span></td>
+                  <td>88% 🔋</td>
+                  <td><button class="btn-tag-xs" onclick="event.stopPropagation(); openDogProfile('DOG249')">View QR Tag</button></td>
+                </tr>
+                <tr style="cursor: pointer;" onclick="openDogProfile('DOG248')">
+                  <td><span class="dog-id-pill">DOG248</span></td>
+                  <td>Rocky</td>
+                  <td>Pedigree Stray</td>
+                  <td>Satara Parisar</td>
+                  <td><span class="status-indicator warning">● Booster Due</span></td>
+                  <td>76% 🔋</td>
+                  <td><button class="btn-tag-xs" onclick="event.stopPropagation(); openDogProfile('DOG248')">View QR Tag</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- QR TAG MODAL -->
+  <div class="modal-overlay" id="qrModal">
+    <div class="modal-card text-center">
+      <div class="modal-header">
+        <h3>Smart Collar QR Tag</h3>
+        <button class="modal-close" onclick="closeQrModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="qr-display-box">
+          <div class="qr-canvas-mock">
+            <svg viewBox="0 0 100 100" width="140" height="140">
+              <path d="M0 0h30v30H0zM70 0h30v30H70zM0 70h30v30H0z" fill="#23170e"/>
+              <path d="M5 5h20v20H5zM75 5h20v20H75zM5 75h20v20H5z" fill="#fbf6f0"/>
+              <circle cx="50" cy="50" r="10" fill="#5c3818"/>
+            </svg>
+          </div>
+          <h4 id="qrDogTitle">DOG251 - Tommy</h4>
+          <p id="qrDogMeta">Indian Pariah · N-8 CIDCO</p>
+          <span class="vax-badge-green">Rabies Vaccinated · AMC Verified</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeQrModal()">Close</button>
+        <button class="btn-primary" onclick="window.print()">Print Collar Tag</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTERED DOG PROFILE MODAL -->
+  <div class="modal-overlay" id="publicPortalModal">
+    <div class="modal-card" style="width: 450px; max-width: 92%; border-radius: 20px; padding: 22px 24px; border: 1.5px solid var(--border-light); background: #ffffff; box-shadow: 0 24px 48px rgba(44,26,14,0.22);">
+      <!-- Clean Modal Header -->
+      <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; margin-bottom: 16px; border-bottom: 1px solid var(--border-light);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(120,73,32,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+            🐕
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: var(--accent-brown); letter-spacing: -0.2px;">Registered Street Dog Profile</h3>
+            <p style="margin: 2px 0 0 0; font-size: 0.72rem; color: var(--text-muted);">Municipal Smart Collar & Health Registry</p>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closePublicPortal()" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border-light); background: var(--bg-main); color: var(--accent-brown); font-size: 1.15rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Close Profile">&times;</button>
+      </div>
+
+      <!-- Dog Hero Profile -->
+      <div class="public-body" id="publicPortalBody">
+        <div class="public-dog-hero" style="text-align: center; margin-bottom: 16px;">
+          <div class="public-dog-img" style="position: relative; width: 84px; height: 84px; border-radius: 50%; margin: 0 auto 10px auto; border: 3px solid var(--accent-brown); box-shadow: 0 4px 16px rgba(120,73,32,0.22); overflow: hidden;">
+            <img src="assets/dog_moti.png" alt="Dog photo" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <div style="margin-bottom: 6px;">
+            <span class="vax-status-chip" id="pubVaxChip" style="background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; font-weight: 700; font-size: 0.75rem; padding: 3px 12px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 4px;">✓ Rabies Vaccinated</span>
+          </div>
+          <h2 id="pubDogName" style="font-size: 1.25rem; font-weight: 800; color: var(--text-dark); margin: 4px 0 2px 0;">Tommy (DOG251)</h2>
+          <p class="pub-sub" id="pubDogBreed" style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Indian Pariah · Community Street Dog</p>
+        </div>
+
+        <!-- Telemetry & Health Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px;">
+          <div style="background: var(--bg-main); border: 1px solid var(--border-light); border-radius: 12px; padding: 10px 12px;">
+            <div style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px;">📍 Municipal Zone</div>
+            <div id="valZone" style="font-size: 0.82rem; font-weight: 700; color: var(--text-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">N-8 CIDCO, Aurangabad</div>
+          </div>
+          <div style="background: var(--bg-main); border: 1px solid var(--border-light); border-radius: 12px; padding: 10px 12px;">
+            <div style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px;">💉 Anti-Rabies Vax</div>
+            <div id="valVax" style="font-size: 0.82rem; font-weight: 700; color: #15803d; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">14 Jan 2026 (Valid 1 Yr)</div>
+          </div>
+          <div style="background: var(--bg-main); border: 1px solid var(--border-light); border-radius: 12px; padding: 10px 12px;">
+            <div style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px;">🏃 AI Motion State</div>
+            <div id="valMotion" style="font-size: 0.82rem; font-weight: 700; color: var(--text-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Moving Normally 🐾</div>
+          </div>
+          <div style="background: var(--bg-main); border: 1px solid var(--border-light); border-radius: 12px; padding: 10px 12px;">
+            <div style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px;">🩺 Health Status</div>
+            <div id="valHealth" style="font-size: 0.82rem; font-weight: 700; color: var(--text-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Healthy & Non-Aggressive</div>
+          </div>
+          <div style="background: var(--bg-main); border: 1px solid var(--border-light); border-radius: 12px; padding: 10px 12px;">
+            <div style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px;">🔋 Collar Battery</div>
+            <div id="valBattery" style="font-size: 0.82rem; font-weight: 700; color: var(--text-dark);">94% • Active Sensor</div>
+          </div>
+          <div style="background: var(--bg-main); border: 1px solid var(--border-light); border-radius: 12px; padding: 10px 12px;">
+            <div style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px;">🌡️ Body Temperature</div>
+            <div id="valTemp" style="font-size: 0.82rem; font-weight: 700; color: var(--text-dark);">38.6 °C (Normal)</div>
+          </div>
+        </div>
+
+        <!-- Working Action Buttons -->
+        <div style="display: flex; gap: 10px; border-top: 1px solid var(--border-light); padding-top: 14px;">
+          <button class="btn-primary" onclick="trackDogOnMap()" style="flex: 1; padding: 10px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 12px; background: var(--accent-brown); color: #ffffff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 6px rgba(120,73,32,0.25);">
+            <span>📍</span> Track on City Map
+          </button>
+          <button class="btn-secondary" onclick="closePublicPortal()" style="padding: 10px 18px; font-size: 0.85rem; font-weight: 700; border-radius: 12px; background: var(--bg-main); color: var(--accent-brown); border: 1px solid var(--border-light); cursor: pointer;">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

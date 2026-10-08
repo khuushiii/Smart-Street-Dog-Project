@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin User Management - Smart Stray Dog Tracking System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="light-theme">
+  <div class="app-container">
+    
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-left">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+              <path d="M19 13c.3 0 .5-.1.7-.3l1.8-1.8c.4-.4.4-1 0-1.4l-1.4-1.4c-.4-.4-1-.4-1.4 0l-1.4 1.4c-.4.4-.4 1 0 1.4l.7.7-1.5 1.5c-.2.2-.3.4-.3.7v3h-2v-4c0-.6-.4-1-1-1H9.8l-1.2-2.4c-.2-.4-.6-.6-1-.6H5c-.6 0-1 .4-1 1s.4 1 1 1h2.1l1.4 2.7c.1.3.4.5.7.5H11v4H7.8c-.5-1.2-1.7-2-3-2-1.7 0-3 1.3-3 3s1.3 3 3 3c1.3 0 2.5-.8 3-2h8.4c.5 1.2 1.7 2 3 2 1.7 0 3-1.3 3-3s-1.3-3-3-3c-.4 0-.8.1-1.2.3V13z"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h2>SmartDog</h2>
+            <span>Identification System</span>
+          </div>
+        </div>
+        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Collapse Sidebar">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" id="sidebarToggleIcon">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sidebar-menu-label">MAIN MENU</div>
+
+      <nav class="sidebar-nav">
+        <a href="index.html" class="nav-item" data-title="Dashboard">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+              <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+              <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+              <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+            </svg>
+          </span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+
+        <a href="city-map.html" class="nav-item" data-title="City Map">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+              <line x1="8" y1="2" x2="8" y2="18"/>
+              <line x1="16" y1="6" x2="16" y2="22"/>
+            </svg>
+          </span>
+          <span class="nav-label">City Map</span>
+        </a>
+
+        <a href="alerts-inbox.html" class="nav-item" data-title="Alerts Inbox">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </span>
+          <span class="nav-label">Alerts Inbox</span>
+          <span class="nav-badge">12</span>
+        </a>
+
+        <a href="dog-management.html" class="nav-item" data-title="Dog Management">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2a5 5 0 0 1 5 5v3a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5z"/>
+              <path d="M19 11v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="22"/>
+            </svg>
+          </span>
+          <span class="nav-label">Dog Management</span>
+        </a>
+
+        <a href="register-dog.html" class="nav-item" data-title="Register Dog">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="16"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+          </span>
+          <span class="nav-label">Register Dog</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-promo-card">
+        <div class="promo-dog-img-wrapper">
+          <img src="assets/realistic_dog.png" alt="Aurangabad Smart Dog Telemetry" class="promo-dog-img">
+        </div>
+        <h4>Together for Better Streets</h4>
+        <p>Monitor • Protect • Care</p>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-wrapper">
+      <!-- TOP HEADER -->
+      <header class="top-header">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" id="adminSearchInput" placeholder="Search staff members, role, email or zone...">
+        </div>
+
+        <div class="header-actions">
+          <div class="theme-toggle" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+            <div class="toggle-track">
+              <div class="toggle-thumb">☀️</div>
+            </div>
+          </div>
+
+          <a href="alerts-inbox.html" class="icon-btn" title="Notifications">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="btn-dot-badge"></span>
+          </a>
+
+          <div class="user-profile" title="Admin User Management">
+            <div class="avatar">AJ</div>
+            <div class="user-info">
+              <span class="user-name">Ashish Joshi</span>
+              <span class="user-role">Municipal Admin</span>
+            </div>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+
+            <div class="profile-dropdown-menu">
+              <div class="dropdown-header-info">
+                <div style="font-weight: 700; color: var(--text-dark);">Ashish Joshi</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Municipal Admin · AMC Vet Dept</div>
+              </div>
+              <a href="#" onclick="alert('Logged out from AMC Portal'); return false;" class="dropdown-item" style="color: #dc2626;">🚪 Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- PAGE CONTENT BODY -->
+      <div class="content-body">
+        
+        <div class="page-title-row">
+          <div>
+            <h1 class="page-title">Admin & Staff User Management</h1>
+            <p class="page-subtitle">Aurangabad Municipal Corporation role assignments, security credentials, and field squad permissions</p>
+          </div>
+          <div class="card-controls">
+            <select id="roleFilterSelect" class="select-sm">
+              <option value="all">All Roles</option>
+              <option value="super-admin">Super Admin</option>
+              <option value="vet-officer">Veterinary Officer</option>
+              <option value="field-squad">Field Catching Squad</option>
+              <option value="analyst">GIS Analyst</option>
+            </select>
+            <button class="btn-primary-sm" onclick="openAddUserModal()">+ Add Staff Member</button>
+          </div>
+        </div>
+
+        <!-- 3-COL METRIC CARDS -->
+        <div class="stats-grid-3col" style="margin-bottom: 24px;">
+          <!-- Card 1 -->
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon-wrapper">
+                <span>👥</span>
+              </div>
+              <span class="stat-badge green">100% Active</span>
+            </div>
+            <div class="stat-number">28</div>
+            <div class="stat-title">Registered AMC Users</div>
+            <div class="stat-subtext">4 Admins · 12 Field Vets · 12 Catching Squads</div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon-wrapper">
+                <span>🛡️</span>
+              </div>
+              <span class="stat-badge green">Secured</span>
+            </div>
+            <div class="stat-number">100%</div>
+            <div class="stat-title">2FA Security Compliance</div>
+            <div class="stat-subtext">Encrypted sessions & audit logged access</div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon-wrapper">
+                <span>📍</span>
+              </div>
+              <span class="stat-badge orange">7 Zones</span>
+            </div>
+            <div class="stat-number">7</div>
+            <div class="stat-title">AMC Active Field Sectors</div>
+            <div class="stat-subtext">Kranti Chowk, CIDCO, Waluj, Seven Hills</div>
+          </div>
+        </div>
+
+        <!-- USERS TABLE CARD -->
+        <div class="card full-width-card">
+          <div class="card-header">
+            <h3 class="card-title">Authorized Municipal Staff Directory</h3>
+            <span class="table-count-badge">Showing 7 Staff Members</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Name & Contact Email</th>
+                  <th>Role / Designation</th>
+                  <th>Assigned AMC Zone</th>
+                  <th>Last Active</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersTableBody">
+                <tr>
+                  <td><strong>#USR-101</strong></td>
+                  <td>
+                    <div style="font-weight: 700; color: var(--text-dark);">Dr. Rajesh Sharma</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">r.sharma@aurangabad.gov.in</div>
+                  </td>
+                  <td><span class="status-pill-chip critical">Super Admin</span></td>
+                  <td>All AMC Zones</td>
+                  <td>2 mins ago</td>
+                  <td><span class="status-indicator healthy">● Active</span></td>
+                  <td>
+                    <button class="btn-outline-xs" onclick="alert('Editing permissions for Dr. Rajesh Sharma')">Edit Role</button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><strong>#USR-102</strong></td>
+                  <td>
+                    <div style="font-weight: 700; color: var(--text-dark);">Priya Deshmukh</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">p.deshmukh@aurangabad.gov.in</div>
+                  </td>
+                  <td><span class="status-pill-chip info">Senior GIS Analyst</span></td>
+                  <td>Kranti Chowk Command</td>
+                  <td>15 mins ago</td>
+                  <td><span class="status-indicator healthy">● Active</span></td>
+                  <td>
+                    <button class="btn-outline-xs" onclick="alert('Editing permissions for Priya Deshmukh')">Edit Role</button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><strong>#USR-103</strong></td>
+                  <td>
+                    <div style="font-weight: 700; color: var(--text-dark);">Officer Suresh Patil</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">s.patil@aurangabad.gov.in</div>
+                  </td>
+                  <td><span class="status-pill-chip warning">Catching Squad Lead</span></td>
+                  <td>CIDCO N-1 to N-12</td>
+                  <td>1 hour ago</td>
+                  <td><span class="status-indicator healthy">● Active</span></td>
+                  <td>
+                    <button class="btn-outline-xs" onclick="alert('Editing permissions for Officer Suresh Patil')">Edit Role</button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><strong>#USR-104</strong></td>
+                  <td>
+                    <div style="font-weight: 700; color: var(--text-dark);">Dr. Ananya Kulkarni</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">a.kulkarni@aurangabad.gov.in</div>
+                  </td>
+                  <td><span class="status-pill-chip success">Rabies Vaccination Officer</span></td>
+                  <td>Seven Hills / Garkheda</td>
+                  <td>Today 09:30 AM</td>
+                  <td><span class="status-indicator healthy">● Active</span></td>
+                  <td>
+                    <button class="btn-outline-xs" onclick="alert('Editing permissions for Dr. Ananya Kulkarni')">Edit Role</button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><strong>#USR-105</strong></td>
+                  <td>
+                    <div style="font-weight: 700; color: var(--text-dark);">Officer Vikram Thorne</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">v.thorne@aurangabad.gov.in</div>
+                  </td>
+                  <td><span class="status-pill-chip warning">Waluj Field Inspector</span></td>
+                  <td>Waluj MIDC Sector 3</td>
+                  <td>Yesterday</td>
+                  <td><span class="status-indicator warning">● On Leave</span></td>
+                  <td>
+                    <button class="btn-outline-xs" onclick="alert('Editing permissions for Officer Vikram Thorne')">Edit Role</button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><strong>#USR-106</strong></td>
+                  <td>
+                    <div style="font-weight: 700; color: var(--text-dark);">Amitabh Sen</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">a.sen@aurangabad.gov.in</div>
+                  </td>
+                  <td><span class="status-pill-chip critical">System Administrator</span></td>
+                  <td>All AMC Zones</td>
+                  <td>3 hours ago</td>
+                  <td><span class="status-indicator healthy">● Active</span></td>
+                  <td>
+                    <button class="btn-outline-xs" onclick="alert('Editing permissions for Amitabh Sen')">Edit Role</button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><strong>#USR-107</strong></td>
+                  <td>
+                    <div style="font-weight: 700; color: var(--text-dark);">Dr. Neha Kadam</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">n.kadam@aurangabad.gov.in</div>
+                  </td>
+                  <td><span class="status-pill-chip success">Animal Shelter Vet</span></td>
+                  <td>Satara Parisar Shelter</td>
+                  <td>30 mins ago</td>
+                  <td><span class="status-indicator healthy">● Active</span></td>
+                  <td>
+                    <button class="btn-outline-xs" onclick="alert('Editing permissions for Dr. Neha Kadam')">Edit Role</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ADD USER MODAL DIALOG -->
+  <div id="addUserModal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>+ Register New Municipal Staff User</h3>
+        <button class="close-btn" onclick="closeAddUserModal()">&times;</button>
+      </div>
+      <form id="addUserForm" onsubmit="handleAddNewUser(event)">
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="newUserName" class="form-input" placeholder="e.g. Dr. Ramesh Gupta" required>
+        </div>
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label">Official Email Address</label>
+          <input type="email" id="newUserEmail" class="form-input" placeholder="r.gupta@aurangabad.gov.in" required>
+        </div>
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <div class="form-group">
+            <label class="form-label">Role / Designation</label>
+            <select id="newUserRole" class="form-input" required>
+              <option value="Super Admin">Super Admin</option>
+              <option value="Veterinary Officer">Veterinary Officer</option>
+              <option value="Field Catching Squad">Field Catching Squad</option>
+              <option value="GIS Data Analyst">GIS Data Analyst</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Assigned AMC Sector</label>
+            <select id="newUserZone" class="form-input" required>
+              <option value="All AMC Zones">All AMC Zones</option>
+              <option value="Kranti Chowk">Kranti Chowk</option>
+              <option value="CIDCO N-1 to N-12">CIDCO N-1 to N-12</option>
+              <option value="Waluj MIDC">Waluj MIDC</option>
+              <option value="Seven Hills / Garkheda">Seven Hills / Garkheda</option>
+              <option value="Satara Parisar">Satara Parisar</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn-secondary-sm" onclick="closeAddUserModal()">Cancel</button>
+          <button type="submit" class="btn-primary-sm">Create User Credentials</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function openAddUserModal() {
+      document.getElementById('addUserModal').style.display = 'flex';
+    }
+
+    function closeAddUserModal() {
+      document.getElementById('addUserModal').style.display = 'none';
+    }
+
+    function handleAddNewUser(e) {
+      e.preventDefault();
+      const name = document.getElementById('newUserName').value;
+      const email = document.getElementById('newUserEmail').value;
+      const role = document.getElementById('newUserRole').value;
+      const zone = document.getElementById('newUserZone').value;
+
+      const tbody = document.getElementById('adminUsersTableBody');
+      const newRow = document.createElement('tr');
+      const randomId = '#USR-' + Math.floor(100 + Math.random() * 900);
+
+      newRow.innerHTML = `
+        <td><strong>${randomId}</strong></td>
+        <td>
+          <div style="font-weight: 700; color: var(--text-dark);">${name}</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">${email}</div>
+        </td>
+        <td><span class="status-pill-chip info">${role}</span></td>
+        <td>${zone}</td>
+        <td>Just now</td>
+        <td><span class="status-indicator healthy">● Active</span></td>
+        <td>
+          <button class="btn-outline-xs" onclick="alert('Editing permissions for ${name}')">Edit Role</button>
+        </td>
+      `;
+
+      tbody.prepend(newRow);
+      closeAddUserModal();
+      alert(`User ${name} successfully registered with role ${role}!`);
+    }
+  </script>
+</body>
+</html>

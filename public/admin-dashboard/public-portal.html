@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Public QR Tag Scanner | SmartDog System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="light-theme" style="background-color: #23170e; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px;">
+
+  <div class="modal-card public-card" style="position: relative; display: block; width: 440px; margin: 0 auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+    <div class="public-header">
+      <div class="public-lang-selector">
+        <button class="lang-btn active" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="mr">मराठी</button>
+        <button class="lang-btn" data-lang="hi">हिंदी</button>
+      </div>
+      <a href="index.html" class="btn-secondary-sm" style="text-decoration: none;">Dashboard &rsaquo;</a>
+    </div>
+
+    <div class="public-body" id="publicPortalBody">
+      <div class="public-dog-hero">
+        <div class="public-dog-img" style="overflow: hidden; width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 10px auto; border: 2.5px solid var(--accent-brown); box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+          <img src="assets/realistic_dog.png" alt="Moti" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <span class="vax-status-chip">✓ Rabies Vaccinated</span>
+      </div>
+
+      <div class="public-info-content">
+        <h2 id="pubDogName">Moti (DOG251)</h2>
+        <p class="pub-sub" id="pubDogBreed">Indian Pariah · Community Street Dog</p>
+        
+        <div class="pub-info-grid">
+          <div class="pub-info-item">
+            <span id="labelZone">Municipal Zone:</span>
+            <strong id="valZone">N-8 CIDCO, Aurangabad</strong>
+          </div>
+          <div class="pub-info-item">
+            <span id="labelVax">Anti-Rabies Date:</span>
+            <strong id="valVax">14 Jan 2026 (Valid 1 Yr)</strong>
+          </div>
+          <div class="pub-info-item">
+            <span id="labelMotion">AI Motion State:</span>
+            <strong id="valMotion">Resting Safely</strong>
+          </div>
+          <div class="pub-info-item">
+            <span id="labelHealth">Health Status:</span>
+            <strong id="valHealth">Healthy & Non-Aggressive</strong>
+          </div>
+        </div>
+
+        <!-- Citizen Report Box -->
+        <div class="citizen-report-card">
+          <h4 id="labelReportTitle">Report Dog Anomaly / Injury</h4>
+          <p id="labelReportSub">Spotted this dog in distress, injured, or displaying symptoms?</p>
+          <select class="form-control-sm mb-2" id="reportTypeSelect">
+            <option value="injured">Injured / Limping Animal</option>
+            <option value="rabid">Suspected Rabies / Aggressive Behavior</option>
+            <option value="missing">Missing Collar / Damaged Tag</option>
+          </select>
+          <button class="btn-alert-full" id="btnSubmitReport" onclick="alert('Thank you! Local Animal Rescue NGO notified.')">Submit Report to NGO Rescue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+@import 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap';
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* ── palette ── */
+  --color-brown-dark:   #784920;
+  --color-brown-rust:   #764a2f;
+  --color-beige:        #dbc8ad;
+  --color-warm-gray:    #bebbbd;
+  --color-cool-gray:    #bcc7cf;
+
+  /* ── surface ── */
+  --color-bg:           #faf6f1;
+  --color-surface:      #ffffff;
+  --color-border:       #ede5d8;
+
+  --radius-card: 18px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  background-color: #faf6f1;
+  color: #2c1a0e;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #dbc8ad; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #c4a880; }
+
+/* ── Precise Single-Page Print Styles for Digital ID Pass ─────────────────── */
+@media print {
+  @page {
+    size: portrait;
+    margin: 10mm;
+  }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+  }
+
+  /* Remove all background components completely from the layout tree */
+  #root > div > *:not(#digital-id-modal-overlay),
+  nav,
+  main,
+  footer,
+  aside,
+  header,
+  .no-print {
+    display: none !important;
+  }
+
+  #digital-id-modal-overlay {
+    position: static !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    overflow: visible !important;
+  }
+
+  #digital-id-modal-card {
+    position: static !important;
+    width: 100% !important;
+    max-width: 440px !important;
+    height: auto !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    overflow: visible !important;
+  }
+
+  #printable-digital-id-pass {
+    visibility: visible !important;
+    position: static !important;
+    display: block !important;
+    transform: none !important;
+    left: auto !important;
+    top: auto !important;
+    width: 420px !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    background: #ffffff !important;
+    color: #2c1a0e !important;
+    border: 2px solid #784920 !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-before: avoid !important;
+    page-break-after: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #printable-digital-id-pass * {
+    visibility: visible !important;
+  }
+}

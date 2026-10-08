@@ -1,0 +1,923 @@
+/* ==========================================================================
+   SMARTDOG IDENTIFICATION SYSTEM - APPLICATION LOGIC
+   Aurangabad Municipal Corporation - Smart Street Dog IoT & AI System
+   ========================================================================== */
+
+document.addEventListener('DOMContentLoaded', () => {
+  initNavigation();
+  initSidebarToggle();
+  initThemeToggle();
+  initMultiStepRegistration();
+  initMapInteractions();
+  initAlertFilters();
+  initPublicPortalLocalization();
+  initSearch();
+  initUserProfileDropdown();
+  loadStoredCitizenIncidents();
+});
+
+/* --------------------------------------------------------------------------
+   0. TOP-RIGHT USER PROFILE DROPDOWN MENU
+   -------------------------------------------------------------------------- */
+function initUserProfileDropdown() {
+  const profileWidgets = document.querySelectorAll('.user-profile');
+  
+  profileWidgets.forEach(widget => {
+    if (widget.dataset.dropdownInit) return;
+    widget.dataset.dropdownInit = 'true';
+
+    widget.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const menu = widget.querySelector('.profile-dropdown-menu');
+      if (menu) {
+        // Toggle current menu
+        const isShown = menu.classList.contains('show');
+        document.querySelectorAll('.profile-dropdown-menu').forEach(m => m.classList.remove('show'));
+        if (!isShown) {
+          menu.classList.add('show');
+        }
+      }
+    });
+
+    const menu = widget.querySelector('.profile-dropdown-menu');
+    if (menu) {
+      menu.addEventListener('click', (e) => {
+        // Allow links to click normally, but stop propagation so menu doesn't vanish prematurely
+        e.stopPropagation();
+      });
+    }
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.profile-dropdown-menu').forEach(m => m.classList.remove('show'));
+  });
+}
+
+/* --------------------------------------------------------------------------
+   0. ADJUSTABLE / COLLAPSIBLE SIDEBAR TOGGLE
+   -------------------------------------------------------------------------- */
+function initSidebarToggle() {
+  const sidebar = document.getElementById('sidebar');
+  const toggleBtn = document.getElementById('sidebarToggleBtn');
+  const toggleIcon = document.getElementById('sidebarToggleIcon');
+
+  if (toggleBtn && sidebar) {
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sidebar.classList.toggle('collapsed');
+      const isCollapsed = sidebar.classList.contains('collapsed');
+      if (toggleIcon) {
+        toggleIcon.style.transform = isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)';
+      }
+    });
+  }
+}
+
+/* --------------------------------------------------------------------------
+   1. NAVIGATION & TAB SWITCHING
+   -------------------------------------------------------------------------- */
+function initNavigation() {
+  const navItems = document.querySelectorAll('.sidebar-nav .nav-item[data-tab]');
+  const tabPages = document.querySelectorAll('.tab-page');
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const targetTab = item.getAttribute('data-tab');
+      switchToTab(targetTab);
+    });
+  });
+
+  // Public QR Portal button
+  const portalBtn = document.getElementById('openPublicPortalBtn');
+  if (portalBtn) {
+    portalBtn.addEventListener('click', () => {
+      openPublicPortal('DOG251');
+    });
+  }
+
+  // Header alert button
+  const headerAlertsBtn = document.getElementById('headerAlertsBtn');
+  if (headerAlertsBtn) {
+    headerAlertsBtn.addEventListener('click', () => {
+      switchToTab('alerts-inbox');
+    });
+  }
+
+  // View All Alerts link
+  const viewAllLink = document.getElementById('viewAllAlertsLink');
+  if (viewAllLink) {
+    viewAllLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchToTab('alerts-inbox');
+    });
+  }
+}
+
+function switchToTab(tabId) {
+  const navItems = document.querySelectorAll('.sidebar-nav .nav-item');
+  const tabPages = document.querySelectorAll('.tab-page');
+
+  navItems.forEach(nav => {
+    if (nav.getAttribute('data-tab') === tabId) {
+      nav.classList.add('active');
+    } else {
+      nav.classList.remove('active');
+    }
+  });
+
+  tabPages.forEach(page => {
+    if (page.id === tabId) {
+      page.classList.add('active');
+    } else {
+      page.classList.remove('active');
+    }
+  });
+}
+
+/* --------------------------------------------------------------------------
+   2. THEME SWITCHER
+   -------------------------------------------------------------------------- */
+function initThemeToggle() {
+  const toggleBtn = document.getElementById('themeToggleBtn');
+  const thumb = toggleBtn ? toggleBtn.querySelector('.toggle-thumb') : null;
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-theme');
+      const isDark = document.body.classList.contains('dark-theme');
+
+      if (thumb) {
+        thumb.textContent = isDark ? '🌙' : '☀️';
+      }
+    });
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. MULTI-STEP DOG REGISTRATION
+   -------------------------------------------------------------------------- */
+let currentStep = 1;
+
+function initMultiStepRegistration() {
+  const nextBtn = document.getElementById('nextStepBtn');
+  const prevBtn = document.getElementById('prevStepBtn');
+  const photoInput = document.getElementById('dogPhotoInput');
+  const photoPreviewImg = document.getElementById('photoPreviewImg');
+  const photoPreviewContainer = document.getElementById('photoPreviewContainer');
+  const dropzone = document.getElementById('photoDropzone');
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      if (currentStep < 5) {
+        currentStep++;
+        updateStepUI();
+      } else {
+        // Final submit
+        addNewDogRecord();
+        currentStep = 1;
+        updateStepUI();
+        alert('Dog registered successfully into Aurangabad Municipal Database!');
+      }
+    });
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      if (currentStep > 1) {
+        currentStep--;
+        updateStepUI();
+      }
+    });
+  }
+
+  // Photo Input Preview
+  if (photoInput) {
+    photoInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          photoPreviewImg.src = event.target.result;
+          photoPreviewContainer.style.display = 'block';
+          dropzone.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+}
+
+function updateStepUI() {
+  const stepText = document.getElementById('stepIndicatorText');
+  const nextBtn = document.getElementById('nextStepBtn');
+  const prevBtn = document.getElementById('prevStepBtn');
+
+  if (stepText) stepText.textContent = `Step ${currentStep} of 5`;
+
+  // Circles
+  const circles = document.querySelectorAll('.step-circle');
+  circles.forEach(circle => {
+    const s = parseInt(circle.getAttribute('data-step'));
+    if (s === currentStep) {
+      circle.classList.add('active');
+      circle.classList.remove('completed');
+    } else if (s < currentStep) {
+      circle.classList.remove('active');
+      circle.classList.add('completed');
+    } else {
+      circle.classList.remove('active', 'completed');
+    }
+  });
+
+  // Panels
+  for (let i = 1; i <= 5; i++) {
+    const panel = document.getElementById(`stepPanel${i}`);
+    if (panel) {
+      panel.style.display = (i === currentStep) ? 'block' : 'none';
+    }
+  }
+
+  // Buttons
+  if (prevBtn) prevBtn.style.display = (currentStep > 1) ? 'inline-block' : 'none';
+  if (nextBtn) {
+    nextBtn.textContent = (currentStep === 5) ? 'Save & Print Tag' : 'Next Step ›';
+  }
+}
+
+function addNewDogRecord() {
+  const dogName = document.getElementById('regDogName').value || 'Tommy';
+  const breed = document.getElementById('regBreed').value || 'Indian Pariah';
+  const area = document.getElementById('regArea').value || 'N-8 CIDCO';
+  const newId = 'DOG' + Math.floor(252 + Math.random() * 50);
+
+  const tbody = document.getElementById('recentDogsTableBody');
+  if (tbody) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <div class="dog-table-cell">
+          <img src="assets/dog_moti.png" class="dog-table-avatar" alt="Dog photo">
+          <strong>${dogName}</strong>
+        </div>
+      </td>
+      <td><span class="dog-id-pill">${newId}</span></td>
+      <td>${breed}</td>
+      <td>${area}</td>
+      <td><span class="status-indicator healthy">● Healthy</span></td>
+      <td><button class="btn-tag-xs" onclick="openQrModal('${newId}', '${dogName}', '${breed}', '${area}')">View QR Tag</button></td>
+    `;
+    tbody.insertBefore(tr, tbody.firstChild);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. REGISTERED DOGS DIRECTORY & MAP INTERACTIONS
+   -------------------------------------------------------------------------- */
+const REGISTERED_DOGS = {
+  DOG251: {
+    id: "DOG251",
+    name: "Tommy",
+    breed: "Indian Pariah",
+    subBreed: "Indian Pariah · Community Street Dog",
+    zone: "N-8 CIDCO, Aurangabad",
+    area: "N-8 CIDCO",
+    vaxStatus: "✓ Rabies Vaccinated",
+    vaxDate: "14 Jan 2026 (Valid 1 Yr)",
+    motionState: "Moving Normally",
+    healthStatus: "Healthy & Non-Aggressive",
+    photo: "assets/dog_moti.png",
+    battery: "94%",
+    statusBadge: "healthy",
+    temp: "38.6 °C"
+  },
+  DOG250: {
+    id: "DOG250",
+    name: "Bella",
+    breed: "Mixed mutt",
+    subBreed: "Mixed mutt · Rescued Local Stray",
+    zone: "Waluj, Aurangabad",
+    area: "Waluj",
+    vaxStatus: "✓ Rabies Vaccinated",
+    vaxDate: "02 Feb 2026 (Valid 1 Yr)",
+    motionState: "Resting Safely",
+    healthStatus: "Healthy & Non-Aggressive",
+    photo: "assets/realistic_dog.png",
+    battery: "82%",
+    statusBadge: "healthy",
+    temp: "38.4 °C"
+  },
+  DOG249: {
+    id: "DOG249",
+    name: "Max",
+    breed: "Indian spitz",
+    subBreed: "Indian spitz · Community Guard Stray",
+    zone: "CIDCO N-2, Aurangabad",
+    area: "CIDCO N-2",
+    vaxStatus: "✓ Rabies Vaccinated",
+    vaxDate: "20 Dec 2025 (Valid 1 Yr)",
+    motionState: "Moving Normally",
+    healthStatus: "Healthy & Non-Aggressive",
+    photo: "assets/dog_avatar.png",
+    battery: "88%",
+    statusBadge: "healthy",
+    temp: "38.5 °C"
+  },
+  DOG248: {
+    id: "DOG248",
+    name: "Rocky",
+    breed: "Pedigree Stray",
+    subBreed: "Pedigree Stray · Monitored Campus Area",
+    zone: "Satara Parisar, Aurangabad",
+    area: "Satara Parisar",
+    vaxStatus: "⚠️ Booster Due (Overdue 14d)",
+    vaxDate: "10 Nov 2024 (Booster Required)",
+    motionState: "Resting Safely",
+    healthStatus: "Under Observation",
+    photo: "assets/dog_moti.png",
+    battery: "76%",
+    statusBadge: "warning",
+    temp: "38.9 °C"
+  },
+  DOG042: {
+    id: "DOG042",
+    name: "Moti",
+    breed: "Indian Pariah",
+    subBreed: "Indian Pariah · Community Street Dog",
+    zone: "Kranti Chowk, Aurangabad",
+    area: "Kranti Chowk",
+    vaxStatus: "✓ Rabies Vaccinated",
+    vaxDate: "14 Jan 2026 (Valid 1 Yr)",
+    motionState: "Agitated / Needs Attention",
+    healthStatus: "Distress Bark Detected",
+    photo: "assets/dog_moti.png",
+    battery: "68%",
+    statusBadge: "critical",
+    temp: "39.8 °C"
+  },
+  DOG117: {
+    id: "DOG117",
+    name: "Sheru",
+    breed: "Indian spitz",
+    subBreed: "Indian spitz · Industrial Belt",
+    zone: "Waluj MIDC, Aurangabad",
+    area: "Waluj MIDC",
+    vaxStatus: "✓ Rabies Vaccinated",
+    vaxDate: "05 Dec 2025 (Valid 1 Yr)",
+    motionState: "Resting / Elevated Temp",
+    healthStatus: "High Temperature Alert (40.2°C)",
+    photo: "assets/realistic_dog.png",
+    battery: "72%",
+    statusBadge: "warning",
+    temp: "40.2 °C"
+  }
+};
+
+let currentActiveDogId = 'DOG251';
+
+function initMapInteractions() {
+  const pins = document.querySelectorAll('.dog-pin');
+  const popup = document.getElementById('mapPopupCard');
+  const closeBtn = document.getElementById('closeMapPopup');
+  const statusFilter = document.getElementById('mapStatusFilter');
+
+  pins.forEach(pin => {
+    pin.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const dogId = pin.getAttribute('data-dog') || 'DOG251';
+      const name = pin.getAttribute('data-name');
+      const area = pin.getAttribute('data-area');
+      const d = REGISTERED_DOGS[dogId] || {
+        id: dogId,
+        name: name || 'Tommy',
+        breed: 'Indian Pariah',
+        area: area || 'N-8 CIDCO',
+        temp: '38.6 °C',
+        motionState: 'Moving Normally',
+        statusBadge: pin.classList.contains('critical-pin') ? 'critical' : (pin.classList.contains('warning-pin') ? 'warning' : 'healthy'),
+        healthStatus: pin.getAttribute('data-status') || 'Healthy'
+      };
+
+      currentActiveDogId = d.id;
+
+      const popId = document.getElementById('popDogId');
+      if (popId) popId.textContent = d.id;
+
+      const popName = document.getElementById('popDogName');
+      if (popName) popName.textContent = `${d.name} (${d.breed})`;
+
+      const popArea = document.getElementById('popDogArea');
+      if (popArea) popArea.textContent = `📍 ${d.area}`;
+
+      const popTag = document.getElementById('popDogStatusTag');
+      if (popTag) {
+        const isCritical = d.statusBadge === 'critical';
+        const isWarning = d.statusBadge === 'warning';
+        popTag.textContent = isCritical ? 'Critical' : (isWarning ? 'Warning' : 'Healthy');
+        popTag.className = `status-badge ${d.statusBadge}`;
+      }
+
+      const popTemp = document.getElementById('popDogTemp');
+      if (popTemp) popTemp.textContent = d.temp || '38.5 °C';
+
+      const popMotion = document.getElementById('popDogMotion');
+      if (popMotion) popMotion.textContent = d.motionState || 'Normal';
+
+      if (popup) popup.style.display = 'block';
+    });
+  });
+
+  if (closeBtn && popup) {
+    closeBtn.addEventListener('click', () => {
+      popup.style.display = 'none';
+    });
+  }
+
+  // Dismiss popup when clicking on canvas background
+  const mapContainer = document.getElementById('cityMapContainer');
+  if (mapContainer && popup) {
+    mapContainer.addEventListener('click', (e) => {
+      if (!e.target.closest('.dog-pin') && !e.target.closest('#mapPopupCard')) {
+        popup.style.display = 'none';
+      }
+    });
+  }
+
+  if (statusFilter) {
+    statusFilter.addEventListener('change', (e) => {
+      const val = e.target.value;
+      pins.forEach(pin => {
+        if (val === 'all') {
+          pin.style.display = 'flex';
+        } else if (val === 'critical' && pin.classList.contains('critical-pin')) {
+          pin.style.display = 'flex';
+        } else if (val === 'warning' && pin.classList.contains('warning-pin')) {
+          pin.style.display = 'flex';
+        } else if (val === 'healthy' && pin.classList.contains('healthy-pin')) {
+          pin.style.display = 'flex';
+        } else {
+          pin.style.display = 'none';
+        }
+      });
+    });
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. ALERTS INBOX FILTERS & MODALS
+   -------------------------------------------------------------------------- */
+function initAlertFilters() {
+  const tabs = document.querySelectorAll('.alerts-panel .tab-btn');
+  const alertItems = document.querySelectorAll('.alerts-list .alert-item');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      const filter = tab.getAttribute('data-filter');
+      alertItems.forEach(item => {
+        if (filter === 'all' || item.getAttribute('data-type') === filter) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  });
+}
+
+function openAlertModal(dogId, alertTitle, diagnosticInfo) {
+  const modal = document.getElementById('alertModal');
+  document.getElementById('alertModalTitle').textContent = `AI Diagnostic Telemetry - ${dogId}`;
+  document.getElementById('alertModalBody').textContent = `${alertTitle}: ${diagnosticInfo}`;
+  modal.classList.add('active');
+}
+
+function closeAlertModal() {
+  document.getElementById('alertModal').classList.remove('active');
+}
+
+function triggerRescueDispatch(dogId) {
+  alert(`Emergency Rescue Unit dispatched for Dog ${dogId} in Aurangabad Zone.`);
+}
+
+function openDogProfile(dogId, dogName, breed, area) {
+  const d = REGISTERED_DOGS[dogId] || {
+    id: dogId || "DOG251",
+    name: dogName || "Tommy",
+    breed: breed || "Indian Pariah",
+    subBreed: `${breed || "Indian Pariah"} · Community Street Dog`,
+    zone: area ? `${area}, Aurangabad` : "N-8 CIDCO, Aurangabad",
+    area: area || "N-8 CIDCO",
+    vaxStatus: "✓ Rabies Vaccinated",
+    vaxDate: "14 Jan 2026 (Valid 1 Yr)",
+    motionState: "Moving Normally",
+    healthStatus: "Healthy & Non-Aggressive",
+    photo: "assets/dog_moti.png",
+    battery: "94%",
+    statusBadge: "healthy",
+    temp: "38.6 °C"
+  };
+
+  currentActiveDogId = d.id;
+
+  const modal = document.getElementById('publicPortalModal');
+  if (modal) {
+    const img = modal.querySelector('.public-dog-img img');
+    if (img) img.src = d.photo;
+
+    const vaxChip = modal.querySelector('.vax-status-chip');
+    if (vaxChip) {
+      vaxChip.textContent = d.vaxStatus;
+      vaxChip.style.background = d.statusBadge === 'warning' ? '#fef3c7' : '#dcfce7';
+      vaxChip.style.color = d.statusBadge === 'warning' ? '#b45309' : '#15803d';
+    }
+
+    const nameEl = document.getElementById('pubDogName');
+    if (nameEl) nameEl.textContent = `${d.name} (${d.id})`;
+
+    const breedEl = document.getElementById('pubDogBreed');
+    if (breedEl) breedEl.textContent = d.subBreed || `${d.breed} · Community Street Dog`;
+
+    const zoneEl = document.getElementById('valZone');
+    if (zoneEl) zoneEl.textContent = d.zone;
+
+    const vaxDateEl = document.getElementById('valVax');
+    if (vaxDateEl) vaxDateEl.textContent = d.vaxDate;
+
+    const motionEl = document.getElementById('valMotion');
+    if (motionEl) motionEl.textContent = d.motionState;
+
+    const healthEl = document.getElementById('valHealth');
+    if (healthEl) healthEl.textContent = d.healthStatus;
+
+    const batteryEl = document.getElementById('valBattery');
+    if (batteryEl) batteryEl.textContent = `${d.battery || '94%'} • Active Sensor`;
+
+    const tempEl = document.getElementById('valTemp');
+    if (tempEl) tempEl.textContent = `${d.temp || '38.6 °C'} (Normal)`;
+
+    modal.classList.add('active');
+  }
+
+  // Fallback for standalone qrModal
+  const qrModal = document.getElementById('qrModal');
+  if (qrModal && !modal) {
+    const qrTitle = document.getElementById('qrDogTitle');
+    if (qrTitle) qrTitle.textContent = `${d.id} - ${d.name}`;
+    const qrMeta = document.getElementById('qrDogMeta');
+    if (qrMeta) qrMeta.textContent = `${d.breed} · ${d.area}`;
+    qrModal.classList.add('active');
+  }
+}
+
+function trackDogOnMap() {
+  const dogId = currentActiveDogId || 'DOG251';
+  closePublicPortal();
+  window.location.href = `city-map.html?dog=${encodeURIComponent(dogId)}`;
+}
+
+function openQrModal(dogId, dogName, breed, area) {
+  openDogProfile(dogId, dogName, breed, area);
+}
+
+function closeQrModal() {
+  const modal = document.getElementById('qrModal');
+  if (modal) modal.classList.remove('active');
+}
+
+/* --------------------------------------------------------------------------
+   6. PUBLIC QR PORTAL LOCALIZATION (EN, Marathi, Hindi)
+   -------------------------------------------------------------------------- */
+const translations = {
+  en: {
+    name: "Moti (DOG251)",
+    breed: "Indian Pariah · Community Street Dog",
+    labelZone: "Municipal Zone:",
+    valZone: "N-8 CIDCO, Aurangabad",
+    labelVax: "Anti-Rabies Date:",
+    valVax: "14 Jan 2026 (Valid 1 Yr)",
+    labelMotion: "AI Motion State:",
+    valMotion: "Resting Safely",
+    labelHealth: "Health Status:",
+    valHealth: "Healthy & Non-Aggressive",
+    labelReportTitle: "Report Dog Anomaly / Injury",
+    labelReportSub: "Spotted this dog in distress, injured, or displaying symptoms?",
+    btnSubmitReport: "Submit Report to NGO Rescue"
+  },
+  mr: {
+    name: "मोती (DOG251)",
+    breed: "इंडियन पारिया · स्थानिक भटके श्वान",
+    labelZone: "महानगरपालिका विभाग:",
+    valZone: "एन-८ सिडको, औरंगाबाद",
+    labelVax: "रेबीज प्रतिबंधक लस दिनांक:",
+    valVax: "१४ जाने २०२६ (१ वर्ष वैध)",
+    labelMotion: "एआय हालचाल स्थिती:",
+    valMotion: "सुरक्षित विश्रांती घेत आहे 🐾",
+    labelHealth: "आरोग्य स्थिती:",
+    valHealth: "निरोगी व उपद्रवी नाही",
+    labelReportTitle: "श्वान इजा / त्रास नोंदवा",
+    labelReportSub: "हा श्वान जखमी किंवा आजारी अवस्थेत आढळला का?",
+    btnSubmitReport: "एनजीओ बचाव पथकाला अहवाल पाठवा"
+  },
+  hi: {
+    name: "मोती (DOG251)",
+    breed: "इंडियन पारिया · आवारा गली का कुत्ता",
+    labelZone: "नगर निगम क्षेत्र:",
+    valZone: "एन-8 सिडको, औरंगाबाद",
+    labelVax: "एंटी-रेबीज टीकाकरण तिथि:",
+    valVax: "14 जन 2026 (1 वर्ष मान्य)",
+    labelMotion: "एआई मोशन स्थिति:",
+    valMotion: "सुरक्षित आराम कर रहा है 🐾",
+    labelHealth: "स्वास्थ्य स्थिति:",
+    valHealth: "स्वस्थ और शांत स्वभाव",
+    labelReportTitle: "कुत्ते की चोट / परेशानी दर्ज करें",
+    labelReportSub: "क्या यह कुत्ता घायल या पीड़ित दिखाई दे रहा है?",
+    btnSubmitReport: "एनजीओ बचाव दल को रिपोर्ट भेजें"
+  }
+};
+
+function initPublicPortalLocalization() {
+  const langBtns = document.querySelectorAll('.public-lang-selector .lang-btn');
+
+  langBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      langBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const lang = btn.getAttribute('data-lang');
+      applyLanguage(lang);
+    });
+  });
+}
+
+function applyLanguage(lang) {
+  const d = REGISTERED_DOGS[currentActiveDogId] || REGISTERED_DOGS['DOG251'];
+  const nameEl = document.getElementById('pubDogName');
+  const breedEl = document.getElementById('pubDogBreed');
+  const zoneLbl = document.getElementById('labelZone');
+  const zoneVal = document.getElementById('valZone');
+  const vaxLbl = document.getElementById('labelVax');
+  const vaxVal = document.getElementById('valVax');
+  const motionLbl = document.getElementById('labelMotion');
+  const motionVal = document.getElementById('valMotion');
+  const healthLbl = document.getElementById('labelHealth');
+  const healthVal = document.getElementById('valHealth');
+  const repTitle = document.getElementById('labelReportTitle');
+  const repSub = document.getElementById('labelReportSub');
+  const repBtn = document.getElementById('btnSubmitReport');
+
+  if (lang === 'mr') {
+    if (nameEl) nameEl.textContent = `${d.name} (${d.id})`;
+    if (breedEl) breedEl.textContent = `${d.breed} · स्थानिक भटके श्वान`;
+    if (zoneLbl) zoneLbl.textContent = "महानगरपालिका विभाग:";
+    if (zoneVal) zoneVal.textContent = d.zone;
+    if (vaxLbl) vaxLbl.textContent = "रेबीज प्रतिबंधक लस दिनांक:";
+    if (vaxVal) vaxVal.textContent = d.vaxDate;
+    if (motionLbl) motionLbl.textContent = "एआय हालचाल स्थिती:";
+    if (motionVal) motionVal.textContent = d.motionState;
+    if (healthLbl) healthLbl.textContent = "आरोग्य स्थिती:";
+    if (healthVal) healthVal.textContent = d.healthStatus;
+    if (repTitle) repTitle.textContent = "श्वान इजा / त्रास नोंदवा";
+    if (repSub) repSub.textContent = "हा श्वान जखमी किंवा आजारी अवस्थेत आढळला का?";
+    if (repBtn) repBtn.textContent = "एनजीओ बचाव पथकाला अहवाल पाठवा";
+  } else if (lang === 'hi') {
+    if (nameEl) nameEl.textContent = `${d.name} (${d.id})`;
+    if (breedEl) breedEl.textContent = `${d.breed} · आवारा गली का कुत्ता`;
+    if (zoneLbl) zoneLbl.textContent = "नगर निगम क्षेत्र:";
+    if (zoneVal) zoneVal.textContent = d.zone;
+    if (vaxLbl) vaxLbl.textContent = "एंटी-रेबीज टीकाकरण तिथि:";
+    if (vaxVal) vaxVal.textContent = d.vaxDate;
+    if (motionLbl) motionLbl.textContent = "एआई मोशन स्थिति:";
+    if (motionVal) motionVal.textContent = d.motionState;
+    if (healthLbl) healthLbl.textContent = "स्वास्थ्य स्थिति:";
+    if (healthVal) healthVal.textContent = d.healthStatus;
+    if (repTitle) repTitle.textContent = "कुत्ते की चोट / परेशानी दर्ज करें";
+    if (repSub) repSub.textContent = "क्या यह कुत्ता घायल या पीड़ित दिखाई दे रहा है?";
+    if (repBtn) repBtn.textContent = "एनजीओ बचाव दल को रिपोर्ट भेजें";
+  } else {
+    if (nameEl) nameEl.textContent = `${d.name} (${d.id})`;
+    if (breedEl) breedEl.textContent = d.subBreed || `${d.breed} · Community Street Dog`;
+    if (zoneLbl) zoneLbl.textContent = "Municipal Zone:";
+    if (zoneVal) zoneVal.textContent = d.zone;
+    if (vaxLbl) vaxLbl.textContent = "Anti-Rabies Date:";
+    if (vaxVal) vaxVal.textContent = d.vaxDate;
+    if (motionLbl) motionLbl.textContent = "AI Motion State:";
+    if (motionVal) motionVal.textContent = d.motionState;
+    if (healthLbl) healthLbl.textContent = "Health Status:";
+    if (healthVal) healthVal.textContent = d.healthStatus;
+    if (repTitle) repTitle.textContent = "Report Dog Anomaly / Injury";
+    if (repSub) repSub.textContent = "Spotted this dog in distress, injured, or displaying symptoms?";
+    if (repBtn) repBtn.textContent = "Submit Report to NGO Rescue";
+  }
+}
+
+function openPublicPortal(dogId) {
+  openDogProfile(dogId || 'DOG251');
+}
+
+function closePublicPortal() {
+  const modal = document.getElementById('publicPortalModal');
+  if (modal) modal.classList.remove('active');
+}
+
+/* --------------------------------------------------------------------------
+   7. LIVE SEARCH
+   -------------------------------------------------------------------------- */
+function initSearch() {
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#recentDogsTableBody tr');
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(q) ? '' : 'none';
+      });
+    });
+  }
+
+  // Admin User Page Live Search
+  const adminSearchInput = document.getElementById('adminSearchInput');
+  if (adminSearchInput) {
+    adminSearchInput.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#adminUsersTableBody tr');
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(q) ? '' : 'none';
+      });
+    });
+  }
+
+  // Admin User Role Filter
+  const roleFilterSelect = document.getElementById('roleFilterSelect');
+  if (roleFilterSelect) {
+    roleFilterSelect.addEventListener('change', (e) => {
+      const selectedRole = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#adminUsersTableBody tr');
+      rows.forEach(row => {
+        if (selectedRole === 'all') {
+          row.style.display = '';
+        } else {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(selectedRole.replace('-', ' ')) ? '' : 'none';
+        }
+      });
+    });
+  }
+}
+
+/* --------------------------------------------------------------------------
+   8. REAL CHHATRAPATI SAMBHAJINAGAR GIS MAP & TRACE PATH (OPENSTREETMAP / GOOGLE TILES)
+   -------------------------------------------------------------------------- */
+let realGisMap = null;
+let leafletTracePolyline = null;
+
+function initRealLeafletMap() {
+  const mapContainer = document.getElementById('cityMapContainer');
+  if (!mapContainer || typeof L === 'undefined') return;
+
+  // Clear static placeholder content
+  mapContainer.innerHTML = '';
+
+  // Centered precisely on Chhatrapati Sambhajinagar (Aurangabad)
+  realGisMap = L.map('cityMapContainer').setView([19.8762, 75.3433], 13);
+
+  // Carto / OpenStreetMap Voyager tile layer
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(realGisMap);
+
+  // Real Chhatrapati Sambhajinagar Municipal Collar Pins
+  const collarPins = [
+    { id: 'DOG042', name: 'Moti', lat: 19.8732, lng: 75.3245, area: 'Kranti Chowk', status: 'CRITICAL: Distress Bark' },
+    { id: 'DOG251', name: 'Tommy', lat: 19.8835, lng: 75.3621, area: 'CIDCO N-8 (Prozone)', status: 'HEALTHY: Active' },
+    { id: 'DOG117', name: 'Sheru', lat: 19.8450, lng: 75.2280, area: 'Waluj MIDC Sector 3', status: 'WARNING: High Temp' },
+    { id: 'DOG249', name: 'Max', lat: 19.8680, lng: 75.3480, area: 'Seven Hills / Garkheda', status: 'HEALTHY: Active' },
+    { id: 'DOG143', name: 'Simba', lat: 19.8920, lng: 75.3180, area: 'Delhi Gate / Begumpura', status: 'HEALTHY' },
+    { id: 'DOG099', name: 'Tyson', lat: 19.8600, lng: 75.3200, area: 'Railway Station Road', status: 'NORMAL' },
+    { id: 'DOG089', name: 'Kalu', lat: 19.8400, lng: 75.3350, area: 'Satara Parisar (Beed Bypass)', status: 'WARNING: Limping' }
+  ];
+
+  collarPins.forEach(pin => {
+    const marker = L.marker([pin.lat, pin.lng]).addTo(realGisMap);
+    marker.bindPopup(`
+      <div style="font-family: 'Plus Jakarta Sans', sans-serif; padding: 4px; font-size: 13px;">
+        <strong style="color: #5c3818; font-size: 14px;">📍 ${pin.name} (${pin.id})</strong><br>
+        <span style="color: #666;">📍 ${pin.area}</span><br>
+        <span style="font-weight: 700; color: ${pin.status.includes('CRITICAL') ? '#ef4444' : pin.status.includes('WARNING') ? '#d97706' : '#10b981'};">Status: ${pin.status}</span><br>
+        <small style="color: #888;">Chhatrapati Sambhajinagar CSMC Collar</small>
+      </div>
+    `);
+  });
+
+  // Polyline path connecting Kranti Chowk -> Seven Hills -> CIDCO N-8 along Jalna Road
+  const routeCoords = [
+    [19.8732, 75.3245],
+    [19.8710, 75.3350],
+    [19.8680, 75.3480],
+    [19.8780, 75.3580],
+    [19.8835, 75.3621]
+  ];
+
+  leafletTracePolyline = L.polyline(routeCoords, {
+    color: '#ea580c',
+    weight: 5,
+    opacity: 0.9,
+    dashArray: '8, 8'
+  });
+}
+
+function toggleTracePath() {
+  const banner = document.getElementById('tracePathInfoBanner');
+  const btn = document.getElementById('tracePathBtn');
+  const svgGroup = document.getElementById('mapTracePathPolyline');
+
+  if (!svgGroup) return;
+
+  const isVisible = svgGroup.style.display !== 'none';
+
+  if (isVisible) {
+    svgGroup.style.display = 'none';
+    if (banner) banner.style.display = 'none';
+    if (btn) btn.classList.remove('active');
+  } else {
+    svgGroup.style.display = 'block';
+    if (banner) banner.style.display = 'flex';
+    if (btn) btn.classList.add('active');
+  }
+}
+
+/* --------------------------------------------------------------------------
+   9. GEOFENCE RADIUS INTERACTION ON GIS MAP
+   -------------------------------------------------------------------------- */
+function toggleGeofenceRadius() {
+  const geofenceOverlay = document.getElementById('geofenceOverlay');
+  const geofenceBanner = document.getElementById('geofenceInfoBanner');
+  const geofenceBtn = document.getElementById('geofenceRadiusBtn');
+
+  if (!geofenceOverlay) return;
+
+  const isVisible = geofenceOverlay.style.display !== 'none';
+
+  if (isVisible) {
+    geofenceOverlay.style.display = 'none';
+    if (geofenceBanner) geofenceBanner.style.display = 'none';
+    if (geofenceBtn) geofenceBtn.classList.remove('active');
+  } else {
+    geofenceOverlay.style.display = 'block';
+    if (geofenceBanner) geofenceBanner.style.display = 'flex';
+    if (geofenceBtn) geofenceBtn.classList.add('active');
+  }
+}
+
+/* --------------------------------------------------------------------------
+   10. SYNC CITIZEN INCIDENT REPORTS FROM LOCALSTORAGE
+   -------------------------------------------------------------------------- */
+function loadStoredCitizenIncidents() {
+  try {
+    const raw = localStorage.getItem("smartdog_incidents");
+    if (!raw) return;
+    const incidents = JSON.parse(raw);
+    if (!Array.isArray(incidents) || incidents.length === 0) return;
+
+    // 1. Update alert badge count
+    const badges = document.querySelectorAll('.nav-badge, .btn-dot-badge');
+    badges.forEach(b => {
+      if (b.classList.contains('nav-badge')) {
+        b.textContent = 12 + incidents.length;
+      }
+    });
+
+    // 2. Prepend table rows on alerts-inbox.html
+    const alertsTable = document.querySelector('.data-table tbody');
+    if (alertsTable) {
+      incidents.forEach(inc => {
+        const tr = document.createElement('tr');
+        tr.style.background = 'rgba(239, 68, 68, 0.08)';
+        tr.innerHTML = `
+          <td><span class="pill-badge critical-pill">CITIZEN SOS</span></td>
+          <td>${inc.category === 'injured' ? 'Injured / Limping Animal' : 'Citizen Emergency Distress'}</td>
+          <td><strong>${inc.dogCode} (${inc.dogName})</strong></td>
+          <td>${inc.notes} <br><small style="opacity:0.75;">By: ${inc.reporterName} • ${inc.reporterPhone}</small></td>
+          <td>${inc.timestamp}</td>
+          <td><button class="btn-primary-xs" onclick="alert('Dispatching unit for Ticket #${inc.id}\\nDog: ${inc.dogName} (${inc.dogCode})\\nArea: ${inc.area}\\nReporter: ${inc.reporterName} (${inc.reporterPhone})');">Dispatch Unit</button></td>
+        `;
+        alertsTable.insertBefore(tr, alertsTable.firstChild);
+      });
+    }
+
+    // 3. Show notification toast on dashboard
+    if (incidents.length > 0 && !sessionStorage.getItem('smartdog_banner_dismissed')) {
+      const banner = document.createElement('div');
+      banner.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#784920;color:#fff;padding:12px 18px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.35);z-index:9999;display:flex;align-items:center;gap:12px;font-size:13px;font-family:sans-serif;border:1px solid #d4a876;';
+      banner.innerHTML = `<span>🚨 <strong>${incidents.length} New Citizen Report(s)</strong> received from Single Dog page</span><button style="background:transparent;border:none;color:#fff;font-weight:bold;cursor:pointer;font-size:16px;margin-left:8px;" onclick="this.parentElement.remove();sessionStorage.setItem('smartdog_banner_dismissed','true');">✕</button>`;
+      document.body.appendChild(banner);
+    }
+  } catch (e) {
+    console.error("Error loading citizen incidents", e);
+  }
+}
