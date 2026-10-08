@@ -67,7 +67,7 @@
             </svg>
           </span>
           <span class="nav-label">Alerts Inbox</span>
-          <span class="nav-badge">12</span>
+          <span class="nav-badge">5</span>
         </a>
 
         <a href="dog-management.html" class="nav-item" data-title="Dog Management">
@@ -91,8 +91,6 @@
           </span>
           <span class="nav-label">Register Dog</span>
         </a>
-
-
       </nav>
 
       <div class="sidebar-promo-card">
@@ -146,7 +144,8 @@
                 <div style="font-weight: 700; color: var(--text-dark);">Ashish Joshi</div>
                 <div style="font-size: 0.75rem; color: var(--text-muted);">Municipal Admin · AMC Vet Dept</div>
               </div>
-              <a href="#" onclick="alert('Logged out from AMC Portal'); return false;" class="dropdown-item" style="color: #dc2626;">🚪 Sign Out</a>
+              <div style="border-top: 1px solid var(--border-light); margin: 6px 0;"></div>
+              <a href="/" target="_top" class="dropdown-item" style="color: #dc2626; font-weight: 700;">🚪 Sign Out</a>
             </div>
           </div>
         </div>
@@ -250,7 +249,7 @@
                   </tr>
                 </thead>
                 <tbody id="recentDogsTableBody">
-                  <tr>
+                  <tr style="cursor: pointer;" onclick="openDogProfile('DOG251')">
                     <td>
                       <div class="dog-table-cell">
                         <img src="assets/dog_moti.png" class="dog-table-avatar" alt="Tommy photo">
@@ -258,13 +257,13 @@
                       </div>
                     </td>
                     <td><span class="dog-id-pill">DOG251</span></td>
-                    <td>Indian Pariah (Native)</td>
+                    <td>Indian Pariah</td>
                     <td>N-8 CIDCO</td>
                     <td><span class="status-indicator healthy">● Vaccinated</span></td>
                     <td>94% 🔋</td>
-                    <td><button class="btn-tag-xs" onclick="openQrModal('DOG251', 'Tommy', 'Indian Pariah', 'N-8 CIDCO')">View QR Tag</button></td>
+                    <td><button class="btn-tag-xs" onclick="event.stopPropagation(); openDogProfile('DOG251')">View QR Tag</button></td>
                   </tr>
-                  <tr>
+                  <tr style="cursor: pointer;" onclick="openDogProfile('DOG250')">
                     <td>
                       <div class="dog-table-cell">
                         <img src="assets/realistic_dog.png" class="dog-table-avatar" alt="Bella photo">
@@ -272,13 +271,13 @@
                       </div>
                     </td>
                     <td><span class="dog-id-pill">DOG250</span></td>
-                    <td>Labrador Mix (Abandoned)</td>
+                    <td>Mixed mutt</td>
                     <td>Waluj</td>
                     <td><span class="status-indicator healthy">● Vaccinated</span></td>
                     <td>82% 🔋</td>
-                    <td><button class="btn-tag-xs" onclick="openQrModal('DOG250', 'Bella', 'Labrador Mix', 'Waluj')">View QR Tag</button></td>
+                    <td><button class="btn-tag-xs" onclick="event.stopPropagation(); openDogProfile('DOG250')">View QR Tag</button></td>
                   </tr>
-                  <tr>
+                  <tr style="cursor: pointer;" onclick="openDogProfile('DOG249')">
                     <td>
                       <div class="dog-table-cell">
                         <img src="assets/dog_avatar.png" class="dog-table-avatar" alt="Max photo">
@@ -286,13 +285,13 @@
                       </div>
                     </td>
                     <td><span class="dog-id-pill">DOG249</span></td>
-                    <td>German Shepherd Mix</td>
+                    <td>Indian spitz</td>
                     <td>CIDCO N-2</td>
                     <td><span class="status-indicator healthy">● Vaccinated</span></td>
                     <td>88% 🔋</td>
-                    <td><button class="btn-tag-xs" onclick="openQrModal('DOG249', 'Max', 'German Shepherd Mix', 'CIDCO N-2')">View QR Tag</button></td>
+                    <td><button class="btn-tag-xs" onclick="event.stopPropagation(); openDogProfile('DOG249')">View QR Tag</button></td>
                   </tr>
-                  <tr>
+                  <tr style="cursor: pointer;" onclick="openDogProfile('DOG248')">
                     <td>
                       <div class="dog-table-cell">
                         <img src="assets/dog_moti.png" class="dog-table-avatar" alt="Rocky photo">
@@ -300,11 +299,11 @@
                       </div>
                     </td>
                     <td><span class="dog-id-pill">DOG248</span></td>
-                    <td>Indian Pariah</td>
+                    <td>Pedigree Stray</td>
                     <td>Satara Parisar</td>
                     <td><span class="status-indicator warning">● Booster Due</span></td>
                     <td>76% 🔋</td>
-                    <td><button class="btn-tag-xs" onclick="openQrModal('DOG248', 'Rocky', 'Indian Pariah', 'Satara Parisar')">View QR Tag</button></td>
+                    <td><button class="btn-tag-xs" onclick="event.stopPropagation(); openDogProfile('DOG248')">View QR Tag</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -414,41 +413,41 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
+                  <tr style="cursor: pointer;" onclick="openDogProfile('DOG251')">
                     <td><span class="dog-id-pill">DOG251</span></td>
                     <td>Tommy</td>
-                    <td>Indian Pariah (Native)</td>
+                    <td>Indian Pariah</td>
                     <td>N-8 CIDCO</td>
                     <td><span class="status-indicator healthy">Rabies Vaccinated</span></td>
                     <td>94% 🔋</td>
-                    <td><button class="btn-tag-xs" onclick="openQrModal('DOG251', 'Tommy', 'Indian Pariah', 'N-8 CIDCO')">QR Code</button></td>
+                    <td><button class="btn-tag-xs" onclick="event.stopPropagation(); openDogProfile('DOG251')">QR Code</button></td>
                   </tr>
-                  <tr>
+                  <tr style="cursor: pointer;" onclick="openDogProfile('DOG250')">
                     <td><span class="dog-id-pill">DOG250</span></td>
                     <td>Bella</td>
-                    <td>Labrador Mix (Abandoned Pet)</td>
+                    <td>Mixed mutt</td>
                     <td>Waluj</td>
                     <td><span class="status-indicator healthy">Rabies Vaccinated</span></td>
                     <td>82% 🔋</td>
-                    <td><button class="btn-tag-xs" onclick="openQrModal('DOG250', 'Bella', 'Labrador Mix', 'Waluj')">QR Code</button></td>
+                    <td><button class="btn-tag-xs" onclick="event.stopPropagation(); openDogProfile('DOG250')">QR Code</button></td>
                   </tr>
-                  <tr>
+                  <tr style="cursor: pointer;" onclick="openDogProfile('DOG249')">
                     <td><span class="dog-id-pill">DOG249</span></td>
                     <td>Max</td>
-                    <td>German Shepherd Mix</td>
+                    <td>Indian spitz</td>
                     <td>CIDCO N-2</td>
                     <td><span class="status-indicator healthy">Rabies Vaccinated</span></td>
                     <td>88% 🔋</td>
-                    <td><button class="btn-tag-xs" onclick="openQrModal('DOG249', 'Max', 'German Shepherd Mix', 'CIDCO N-2')">QR Code</button></td>
+                    <td><button class="btn-tag-xs" onclick="event.stopPropagation(); openDogProfile('DOG249')">QR Code</button></td>
                   </tr>
-                  <tr>
+                  <tr style="cursor: pointer;" onclick="openDogProfile('DOG248')">
                     <td><span class="dog-id-pill">DOG248</span></td>
                     <td>Rocky</td>
-                    <td>Indian Pariah</td>
+                    <td>Pedigree Stray</td>
                     <td>Satara Parisar</td>
                     <td><span class="status-indicator warning">Booster Due</span></td>
                     <td>76% 🔋</td>
-                    <td><button class="btn-tag-xs" onclick="openQrModal('DOG248', 'Rocky', 'Indian Pariah', 'Satara Parisar')">QR Code</button></td>
+                    <td><button class="btn-tag-xs" onclick="event.stopPropagation(); openDogProfile('DOG248')">QR Code</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -479,10 +478,10 @@
             <div class="form-group">
               <label>Select AI Breed Model</label>
               <select class="form-control">
-                <option>EfficientNet-B0 (PyTorch) Auto-Detect</option>
-                <option>Indian Pariah (Native Street Dog)</option>
-                <option>Indian Spitz</option>
-                <option>Labrador (Abandoned Domestic)</option>
+                <option>Indian Pariah (Native Street Dog - 96%)</option>
+                <option>Indian spitz</option>
+                <option>Mixed mutt</option>
+                <option>Pedigree Stray</option>
               </select>
             </div>
             <button class="btn-primary" onclick="alert('Dog Registered successfully with Smart Collar ID!')">Complete Registration</button>
@@ -493,133 +492,31 @@
     </main>
   </div>
 
-  <!-- MODAL 1: ALERT AI DIAGNOSTICS & TELEMETRY MODAL — Enhanced -->
+  <!-- MODAL 1: ALERT AI DIAGNOSTICS & TELEMETRY MODAL -->
   <div class="modal-overlay" id="alertModal">
-    <div class="modal-card alert-modal-v2">
-
-      <!-- Header -->
-      <div class="amv2-header">
-        <div class="amv2-header-left">
-          <div class="amv2-dog-avatar">&#x1F415;</div>
-          <div>
-            <h3 class="amv2-title" id="alertModalTitle">AI Diagnostic Telemetry &ndash; DOG042</h3>
-            <span class="amv2-severity-badge" id="alertSeverityBadge">&#x25CF; CRITICAL ALERT</span>
-          </div>
-        </div>
-        <button class="modal-close amv2-close" onclick="closeAlertModal()">&#x2715;</button>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="alertModalTitle">AI Telemetry Inspection</h3>
+        <button class="modal-close" onclick="closeAlertModal()">&times;</button>
       </div>
-
-      <!-- Description -->
-      <div class="amv2-desc-row">
-        <div class="amv2-desc-icon">&#x1F399;</div>
-        <p class="amv2-desc-text" id="alertModalBody">Distress Barking: INMP441 microphone captured high frequency distress pattern.</p>
+      <div class="modal-body">
+        <p id="alertModalBody">Loading audio spectrogram data...</p>
+        <div class="spectrogram-box">
+          <div class="wave-bar" style="height: 40%;"></div>
+          <div class="wave-bar" style="height: 80%;"></div>
+          <div class="wave-bar" style="height: 60%;"></div>
+          <div class="wave-bar" style="height: 95%;"></div>
+          <div class="wave-bar" style="height: 30%;"></div>
+          <div class="wave-bar" style="height: 70%;"></div>
+          <div class="wave-bar" style="height: 100%;"></div>
+          <div class="wave-bar" style="height: 85%;"></div>
+        </div>
+        <p class="modal-subtext">ResNet18 + YAMNet Filter: <strong>Distress / Pain Bark (94.2%)</strong></p>
       </div>
-
-      <!-- Audio Player Card -->
-      <div class="amv2-audio-card">
-        <div class="amv2-audio-top-bar">
-          <div class="amv2-audio-source">
-            <span class="amv2-source-dot"></span>
-            <span class="amv2-source-label">INMP441 Microphone &middot; ESP32 Collar Recording</span>
-          </div>
-          <span class="amv2-timestamp">&#x1F4C5; Captured: 04:23 AM &middot; 8.4s</span>
-        </div>
-
-        <!-- Waveform Visualizer -->
-        <div class="amv2-waveform" id="amv2Waveform">
-          <div class="amv2-wf-bar" style="--h:35%"></div>
-          <div class="amv2-wf-bar" style="--h:62%"></div>
-          <div class="amv2-wf-bar" style="--h:45%"></div>
-          <div class="amv2-wf-bar" style="--h:90%"></div>
-          <div class="amv2-wf-bar" style="--h:78%"></div>
-          <div class="amv2-wf-bar" style="--h:55%"></div>
-          <div class="amv2-wf-bar" style="--h:100%"></div>
-          <div class="amv2-wf-bar" style="--h:88%"></div>
-          <div class="amv2-wf-bar" style="--h:70%"></div>
-          <div class="amv2-wf-bar" style="--h:95%"></div>
-          <div class="amv2-wf-bar" style="--h:60%"></div>
-          <div class="amv2-wf-bar" style="--h:82%"></div>
-          <div class="amv2-wf-bar" style="--h:40%"></div>
-          <div class="amv2-wf-bar" style="--h:74%"></div>
-          <div class="amv2-wf-bar" style="--h:52%"></div>
-          <div class="amv2-wf-bar" style="--h:30%"></div>
-          <div class="amv2-wf-bar" style="--h:66%"></div>
-          <div class="amv2-wf-bar" style="--h:48%"></div>
-          <div class="amv2-wf-bar" style="--h:85%"></div>
-          <div class="amv2-wf-bar" style="--h:38%"></div>
-          <div class="amv2-wf-bar" style="--h:72%"></div>
-          <div class="amv2-wf-bar" style="--h:56%"></div>
-          <div class="amv2-wf-bar" style="--h:43%"></div>
-          <div class="amv2-wf-bar" style="--h:92%"></div>
-          <div class="amv2-wf-bar" style="--h:64%"></div>
-          <div class="amv2-wf-bar" style="--h:77%"></div>
-          <div class="amv2-wf-bar" style="--h:50%"></div>
-          <div class="amv2-wf-bar" style="--h:33%"></div>
-          <div class="amv2-wf-bar" style="--h:68%"></div>
-          <div class="amv2-wf-bar" style="--h:58%"></div>
-        </div>
-
-        <!-- Controls Row -->
-        <div class="amv2-controls">
-          <button class="amv2-play-btn" id="amv2PlayBtn" onclick="toggleAlertAudio()" title="Play sample bark recording">
-            <span id="amv2PlayIcon">&#9654;</span>
-          </button>
-          <div class="amv2-timeline-wrap">
-            <div class="amv2-timeline" id="amv2Timeline">
-              <div class="amv2-progress" id="amv2Progress"></div>
-              <div class="amv2-progress-thumb" id="amv2Thumb"></div>
-            </div>
-          </div>
-          <span class="amv2-duration" id="amv2Duration">0:00 / 0:08</span>
-          <button class="amv2-vol-btn" id="amv2VolBtn" onclick="toggleAlertMute()" title="Mute / Unmute">&#x1F50A;</button>
-        </div>
-
-        <!-- Frequency labels -->
-        <div class="amv2-freq-labels">
-          <span>0 Hz</span><span>500</span><span>1 kHz</span><span>2 kHz</span><span>4 kHz+</span>
-        </div>
-      </div>
-
-      <!-- AI Analysis Grid -->
-      <div class="amv2-analysis-grid">
-        <div class="amv2-metric critical-metric">
-          <div class="amv2-metric-icon">&#x1F9E0;</div>
-          <div>
-            <p class="amv2-metric-label">Classification</p>
-            <p class="amv2-metric-val critical-text" id="alertClassification">Distress / Pain Bark</p>
-          </div>
-        </div>
-        <div class="amv2-metric">
-          <div class="amv2-metric-icon">&#x1F4CA;</div>
-          <div>
-            <p class="amv2-metric-label">AI Confidence</p>
-            <p class="amv2-metric-val" id="alertConfidence">94.2%</p>
-          </div>
-        </div>
-        <div class="amv2-metric">
-          <div class="amv2-metric-icon">&#x1F30A;</div>
-          <div>
-            <p class="amv2-metric-label">Peak Frequency</p>
-            <p class="amv2-metric-val">1.84 kHz</p>
-          </div>
-        </div>
-        <div class="amv2-metric">
-          <div class="amv2-metric-icon">&#x2699;&#xFE0F;</div>
-          <div>
-            <p class="amv2-metric-label">Model Pipeline</p>
-            <p class="amv2-metric-val">ResNet18 + YAMNet</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="modal-footer amv2-footer">
+      <div class="modal-footer">
         <button class="btn-secondary" onclick="closeAlertModal()">Close</button>
-        <button class="btn-primary amv2-dispatch-btn" onclick="alert('Emergency Rescue Unit dispatched to DOG042 location!')">
-          &#x1F6A8; Dispatch Rescue Team
-        </button>
+        <button class="btn-primary" onclick="alert('Rescue team dispatched to location!')">Dispatch Rescue Team</button>
       </div>
-
     </div>
   </div>
 
@@ -650,7 +547,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-secondary" onclick="closeQrModal()">Close</button>
-        <button class="btn-primary" onclick="printQrTag()">🖨️ Print Collar Tag</button>
+        <button class="btn-primary" onclick="window.print()">Print Collar Tag</button>
       </div>
     </div>
   </div>
@@ -725,42 +622,6 @@
       </div>
     </div>
   </div>
-
-  <script>
-  /* Smart QR Print — prints ONLY the QR card, always 1 sheet */
-  function printQrTag() {
-    var title  = document.getElementById('qrDogTitle').textContent;
-    var meta   = document.getElementById('qrDogMeta').textContent;
-    var svgEl  = document.querySelector('#qrModal .qr-canvas-mock svg');
-    var svgHTML = svgEl ? svgEl.outerHTML : '';
-    var win = window.open('', '_blank', 'width=480,height=640');
-    win.document.write([
-      '<!DOCTYPE html><html><head><meta charset="UTF-8">',
-      '<title>QR Collar Tag</title><style>',
-      '*{margin:0;padding:0;box-sizing:border-box;}',
-      'body{font-family:Segoe UI,sans-serif;background:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}',
-      '.tag-card{width:340px;border:2px solid #23170e;border-radius:20px;padding:28px 24px 24px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.12);}',
-      '.tag-header{font-size:11px;font-weight:700;letter-spacing:.12em;color:#8c7b6d;text-transform:uppercase;margin-bottom:16px;}',
-      '.tag-qr svg{width:180px;height:180px;}',
-      '.tag-qr{margin:0 auto 16px;display:inline-block;}',
-      '.tag-title{font-size:18px;font-weight:800;color:#23170e;margin-bottom:4px;}',
-      '.tag-meta{font-size:13px;color:#5c3818;margin-bottom:14px;}',
-      '.tag-badge{display:inline-block;background:#d1fae5;color:#065f46;border-radius:999px;padding:4px 14px;font-size:11px;font-weight:700;margin-bottom:16px;}',
-      '.tag-footer{font-size:10px;color:#b3a496;border-top:1px solid #f0e8df;padding-top:12px;}',
-      '@media print{body{padding:0;}.tag-card{box-shadow:none;}}',
-      '</style></head><body><div class="tag-card">',
-      '<div class="tag-header">Aurangabad Municipal Corporation &middot; SmartDog System</div>',
-      '<div class="tag-qr">' + svgHTML + '</div>',
-      '<div class="tag-title">' + title + '</div>',
-      '<div class="tag-meta">' + meta + '</div>',
-      '<div class="tag-badge">&#10003; Rabies Vaccinated &middot; AMC Verified</div>',
-      '<div class="tag-footer">Scan QR for live health telemetry &middot; AMC IoT Collar System<br>smartdog.amc.gov.in &middot; Emergency: 1800-AMC-DOGS</div>',
-      '</div><script>window.onload=function(){window.print();setTimeout(function(){window.close();},1500);};<\/script>',
-      '</body></html>'
-    ].join(''));
-    win.document.close();
-  }
-  </script>
 
   <script src="app.js"></script>
 </body>

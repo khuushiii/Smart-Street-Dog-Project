@@ -67,6 +67,46 @@ async function loadLiveStatsAndDogs() {
   } catch (err) {
     console.warn("[SmartDog] Live dogs table connecting...", err);
   }
+
+  try {
+    const alertsRes = await fetch(`${API_BASE}/api/v1/alerts`);
+    if (alertsRes.ok) {
+      const alertsData = await alertsRes.json();
+      renderLiveAlertsInboxTable(alertsData);
+    }
+  } catch (err) {
+    console.warn("[SmartDog] Live alerts table connecting...", err);
+  }
+}
+
+function renderLiveAlertsInboxTable(alerts) {
+  const alertsTbody = document.querySelector('.data-table tbody');
+  if (!alertsTbody || !Array.isArray(alerts) || alerts.length === 0) return;
+  
+  // Only update if on alerts-inbox page or alerts tab
+  const isAlertsPage = window.location.pathname.includes('alerts-inbox') || document.getElementById('alerts-inbox');
+  if (!isAlertsPage) return;
+
+  alertsTbody.innerHTML = alerts.map(a => {
+    const sev = (a.severity || 'warning').toLowerCase();
+    const pillClass = sev === 'critical' ? 'critical-pill' : (sev === 'high' ? 'critical-pill' : 'warning-pill');
+    const pillText = (a.severity || 'WARNING').toUpperCase();
+    const dogName = a.dog_name || a.dog_code || 'Street Dog';
+    const dogCode = a.dog_code || '';
+    const diag = a.diagnostic || a.alert_type || 'Sensor anomaly';
+    const timeStr = a.timestamp ? new Date(a.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Live';
+
+    return `
+      <tr>
+        <td><span class="pill-badge ${pillClass}">${pillText}</span></td>
+        <td>${a.alert_type || 'Health Anomaly'}</td>
+        <td><strong>${dogCode} (${dogName})</strong></td>
+        <td>${diag}</td>
+        <td>${timeStr}</td>
+        <td><button class="btn-primary-xs" onclick="openAlertModal('${dogCode}', '${a.alert_type || 'Alert'}', '${diag.replace(/'/g, "\\'")}')">Inspect Audio</button></td>
+      </tr>
+    `;
+  }).join('');
 }
 
 function renderLiveDogsTable(dogs) {
@@ -235,6 +275,13 @@ function switchToTab(tabId) {
       page.classList.remove('active');
     }
   });
+
+  if (tabId === 'city-map' && typeof L !== 'undefined') {
+    initRealLeafletMap();
+    setTimeout(() => {
+      if (realGisMap) realGisMap.invalidateSize();
+    }, 150);
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -970,14 +1017,19 @@ let realGisMap = null;
 let leafletTracePolyline = null;
 
 function initRealLeafletMap() {
-  const mapContainer = document.getElementById('cityMapContainer');
+  const mapContainer = document.getElementById('largeMapView') || document.getElementById('cityLeafletMap') || document.getElementById('cityMapContainer');
   if (!mapContainer || typeof L === 'undefined') return;
 
   // Clear static placeholder content
   mapContainer.innerHTML = '';
 
+  if (realGisMap) {
+    try { realGisMap.remove(); } catch(e){}
+    realGisMap = null;
+  }
+
   // Centered precisely on Chhatrapati Sambhajinagar (Aurangabad)
-  realGisMap = L.map('cityMapContainer').setView([19.8762, 75.3433], 13);
+  realGisMap = L.map(mapContainer).setView([19.8762, 75.3433], 13);
 
   // Carto / OpenStreetMap Voyager tile layer
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -1096,15 +1148,7 @@ function loadStoredCitizenIncidents() {
     const incidents = JSON.parse(raw);
     if (!Array.isArray(incidents) || incidents.length === 0) return;
 
-    // 1. Update alert badge count
-    const badges = document.querySelectorAll('.nav-badge, .btn-dot-badge');
-    badges.forEach(b => {
-      if (b.classList.contains('nav-badge')) {
-        b.textContent = 12 + incidents.length;
-      }
-    });
-
-    // 2. Prepend table rows on alerts-inbox.html
+    // Prepend table rows on alerts-inbox.html
     const alertsTable = document.querySelector('.data-table tbody');
     if (alertsTable) {
       incidents.forEach(inc => {
