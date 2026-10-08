@@ -412,49 +412,49 @@
       lat: 19.8680, lng: 75.2920,
       status: 'warning', statusLabel: 'High Temperature Alert',
       temp: '40.2 °C', motion: 'Trembling',
-      img: 'assets/dog_moti.png', label: 'Waluj MIDC',
+      img: 'assets/dog_moti.png', label: 'Sheru',
     },
     {
       id: 'DOG099', name: 'Tyson', area: 'Railway Station Road',
       lat: 19.8820, lng: 75.3230,
       status: 'normal', statusLabel: 'Normal Activity',
       temp: '38.6 °C', motion: 'Walking',
-      img: 'assets/realistic_dog.png', label: 'Railway Station',
+      img: 'assets/realistic_dog.png', label: 'Tyson',
     },
     {
       id: 'DOG143', name: 'Simba', area: 'Delhi Gate / Begumpura',
       lat: 19.8980, lng: 75.3340,
       status: 'healthy', statusLabel: 'Healthy',
       temp: '38.4 °C', motion: 'Resting',
-      img: 'assets/dog_avatar.png', label: 'Delhi Gate',
+      img: 'assets/dog_avatar.png', label: 'Simba',
     },
     {
       id: 'DOG042', name: 'Moti', area: 'Kranti Chowk',
       lat: 19.8760, lng: 75.3420,
       status: 'critical', statusLabel: 'Distress Bark Detected',
       temp: '39.8 °C', motion: 'Agitated',
-      img: 'assets/dog_moti.png', label: 'Kranti Chowk',
+      img: 'assets/dog_moti.png', label: 'Moti',
     },
     {
       id: 'DOG251', name: 'Tommy', area: 'Seven Hills / Garkheda',
       lat: 19.8710, lng: 75.3620,
       status: 'healthy', statusLabel: 'Healthy / Active',
       temp: '38.2 °C', motion: 'Running',
-      img: 'assets/realistic_dog.png', label: 'Seven Hills',
+      img: 'assets/realistic_dog.png', label: 'Tommy',
     },
     {
       id: 'DOG190', name: 'Rocky', area: 'CIDCO N-8 (Prozone)',
       lat: 19.8840, lng: 75.3840,
       status: 'healthy', statusLabel: 'Healthy / Resting',
       temp: '38.0 °C', motion: 'Sleeping',
-      img: 'assets/dog_avatar.png', label: 'CIDCO N-8',
+      img: 'assets/dog_avatar.png', label: 'Rocky',
     },
     {
       id: 'DOG089', name: 'Kalu', area: 'Satara Parisar (Beed Bypass)',
       lat: 19.8530, lng: 75.3460,
       status: 'warning', statusLabel: 'Limping Anomaly',
       temp: '39.1 °C', motion: 'Limping',
-      img: 'assets/dog_moti.png', label: 'Satara Parisar',
+      img: 'assets/dog_moti.png', label: 'Kalu',
     },
   ];
 
@@ -508,7 +508,7 @@
             <img src="${dog.img}" alt="${dog.name}" onerror="this.src='assets/dog_avatar.png'">
           </div>
         </div>
-        <div class="dog-marker-label">${dog.label}</div>
+        <div class="dog-marker-label">${dog.name}</div>
       </div>`;
     return L.divIcon({ html, className: '', iconSize: [70, 74], iconAnchor: [35, 68] });
   }
@@ -547,6 +547,42 @@
       .addTo(map);
     leafletMarkers[dog.id] = { marker, dog };
   });
+
+  // Live Supabase DB sync for city map pins
+  const API_BASE = (window.VITE_API_BASE_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://127.0.0.1:8001' : window.location.origin)).replace(/\/$/, "");
+  fetch(`${API_BASE}/api/v1/map/dogs`)
+    .then(r => r.json())
+    .then(livePins => {
+      if (Array.isArray(livePins) && livePins.length > 0) {
+        livePins.forEach(pin => {
+          if (!pin.lat || !pin.lng) return;
+          const status = pin.health_status?.toLowerCase().includes('critical') ? 'critical'
+            : (pin.health_status?.toLowerCase().includes('observation') || pin.health_status?.toLowerCase().includes('recovery') ? 'warning' : 'healthy');
+          const d = {
+            id: pin.code || pin.id,
+            name: pin.name,
+            area: pin.area,
+            lat: pin.lat,
+            lng: pin.lng,
+            status: status,
+            statusLabel: pin.health_status || 'Healthy',
+            temp: `${pin.temperature_c || 38.5} °C`,
+            motion: pin.inferred_state || 'Moving Normally',
+            img: pin.photo_url || 'assets/dog_moti.png',
+            label: pin.name
+          };
+          if (leafletMarkers[d.id]) {
+            leafletMarkers[d.id].marker.setLatLng([d.lat, d.lng]);
+          } else {
+            const marker = L.marker([d.lat, d.lng], { icon: makeDogIcon(d) })
+              .bindPopup(makePopupHtml(d), { maxWidth: 260, minWidth: 230, closeButton: true })
+              .addTo(map);
+            leafletMarkers[d.id] = { marker, dog: d };
+          }
+        });
+      }
+    })
+    .catch(err => console.warn("Live map pins fetch fallback:", err));
 
   // ── Geofence circle (starts hidden) ─────────────────────
   const geofenceOuter = L.circle([19.8760, 75.3420], {

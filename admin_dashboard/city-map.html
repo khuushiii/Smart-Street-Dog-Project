@@ -87,7 +87,7 @@
     @keyframes pulse-r { 0%,100% { box-shadow: 0 0 0 3px rgba(239,68,68,0.3); }
                          50%      { box-shadow: 0 0 0 7px rgba(239,68,68,0.1); } }
 
-    /* Scale bar */
+    /* Scale bar & Real-time Live Telemetry Pill */
     .gis-scale-bar {
       position: absolute;
       bottom: 10px;
@@ -100,7 +100,27 @@
       border-radius: 8px;
       padding: 4px 10px;
       display: flex;
+      align-items: center;
       gap: 8px;
+    }
+    .live-stream-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #e6f4ea;
+      color: #137333;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(19,115,51,0.2);
+    }
+    .live-dot-pulse {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: pulse-r 1.2s infinite;
     }
 
     /* Custom Leaflet marker styles */
@@ -135,18 +155,6 @@
       white-space: nowrap;
       box-shadow: 0 2px 8px rgba(0,0,0,0.18);
       border: 1px solid rgba(0,0,0,0.06);
-    }
-    .dog-marker-circle.pulse-ring::after {
-      content: '';
-      position: absolute;
-      inset: -6px;
-      border-radius: 50%;
-      border: 3px solid #ef4444;
-      animation: ring-pulse 1.4s ease-out infinite;
-    }
-    @keyframes ring-pulse {
-      0%   { transform: scale(0.85); opacity: 0.9; }
-      100% { transform: scale(1.5);  opacity: 0; }
     }
 
     /* Leaflet popup custom */
@@ -262,6 +270,11 @@
           </span>
           <span class="nav-label">Register Dog</span>
         </a>
+
+        <a href="/" class="nav-item" data-title="Citizen Dog View" target="_top" style="border-left: 3px solid var(--accent-brown); background: rgba(120,73,32,0.06);">
+          <span class="nav-icon">🐾</span>
+          <span class="nav-label">Citizen Dog Page</span>
+        </a>
       </nav>
 
       <div class="sidebar-promo-card">
@@ -282,7 +295,7 @@
             <circle cx="11" cy="11" r="8"/>
             <line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
-          <input type="text" id="searchInput" placeholder="Search zone or dog ID...">
+          <input type="text" id="searchInput" placeholder="Search zone, dog name or collar ID...">
         </div>
 
         <div class="header-actions">
@@ -314,7 +327,8 @@
                 <div style="font-weight: 700; color: var(--text-dark);">Ashish Joshi</div>
                 <div style="font-size: 0.75rem; color: var(--text-muted);">Municipal Admin · AMC Vet Dept</div>
               </div>
-              <a href="#" onclick="alert('Logged out from AMC Portal'); return false;" class="dropdown-item" style="color: #dc2626;">🚪 Sign Out</a>
+              <div style="border-top: 1px solid var(--border-light); margin: 6px 0;"></div>
+              <a href="/" target="_top" class="dropdown-item" style="color: #dc2626; font-weight: 700;">🚪 Sign Out</a>
             </div>
           </div>
         </div>
@@ -324,8 +338,11 @@
       <div class="content-body">
         <div class="page-title-row">
           <div>
-            <h1 class="page-title">City Map GIS Telemetry</h1>
-            <p class="page-subtitle">Aurangabad Municipal Corporation · Live GPS Collar Tracking · OpenStreetMap</p>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+              <h1 class="page-title" style="margin-bottom: 0;">City Map GIS Telemetry</h1>
+              <span class="live-stream-badge"><span class="live-dot-pulse"></span> Live Real-Time GPS Active</span>
+            </div>
+            <p class="page-subtitle">Aurangabad Municipal Corporation · Real-Time GPS Collar Telemetry on OpenStreetMap</p>
           </div>
           <div class="card-controls">
             <select id="mapStatusFilter" class="select-sm" onchange="applyStatusFilter(this.value)">
@@ -364,14 +381,14 @@
           <!-- Geofence Banner -->
           <div class="map-info-banner geofence-banner" id="geofenceBanner" style="display:none;">
             <span>🛡️</span>
-            <span><strong>Geofence Active:</strong> 3.5 km Municipal Boundary · 6 Collars Monitored · 1 Warning (Satara)</span>
+            <span><strong>Geofence Active:</strong> 3.5 km Municipal Boundary · 7 Collars Monitored · 1 Warning (Satara)</span>
             <button class="banner-x" onclick="toggleGeofence()">✕</button>
           </div>
 
           <!-- Scale bar -->
           <div class="gis-scale-bar">
             <span>📍 19.8762° N, 75.3433° E</span>
-            <span>· OpenStreetMap · AMC Geofence Active</span>
+            <span>· OpenStreetMap · Real-Time Satellite Telemetry Active</span>
           </div>
 
         </div>
@@ -385,59 +402,59 @@
 
   <script>
   /* ======================================================
-     REAL LEAFLET MAP — Aurangabad / Chhatrapati Sambhajinagar
+     REAL-TIME LEAFLET MAP — Aurangabad / Chhatrapati Sambhajinagar
      ====================================================== */
 
   // ── Dog data with real GPS coordinates ──────────────────
   const DOG_MARKERS = [
     {
       id: 'DOG117', name: 'Sheru', area: 'Waluj MIDC',
-      lat: 19.868, lng: 75.292,
+      lat: 19.8680, lng: 75.2920,
       status: 'warning', statusLabel: 'High Temperature Alert',
       temp: '40.2 °C', motion: 'Trembling',
-      img: 'assets/dog_moti.png', label: 'Waluj MIDC',
+      img: 'assets/dog_moti.png', label: 'Sheru',
     },
     {
       id: 'DOG099', name: 'Tyson', area: 'Railway Station Road',
-      lat: 19.882, lng: 75.323,
+      lat: 19.8820, lng: 75.3230,
       status: 'normal', statusLabel: 'Normal Activity',
       temp: '38.6 °C', motion: 'Walking',
-      img: 'assets/realistic_dog.png', label: 'Railway Station',
+      img: 'assets/realistic_dog.png', label: 'Tyson',
     },
     {
       id: 'DOG143', name: 'Simba', area: 'Delhi Gate / Begumpura',
-      lat: 19.898, lng: 75.334,
+      lat: 19.8980, lng: 75.3340,
       status: 'healthy', statusLabel: 'Healthy',
       temp: '38.4 °C', motion: 'Resting',
-      img: 'assets/dog_avatar.png', label: 'Delhi Gate',
+      img: 'assets/dog_avatar.png', label: 'Simba',
     },
     {
       id: 'DOG042', name: 'Moti', area: 'Kranti Chowk',
-      lat: 19.876, lng: 75.342,
+      lat: 19.8760, lng: 75.3420,
       status: 'critical', statusLabel: 'Distress Bark Detected',
       temp: '39.8 °C', motion: 'Agitated',
-      img: 'assets/dog_moti.png', label: 'Kranti Chowk',
+      img: 'assets/dog_moti.png', label: 'Moti',
     },
     {
       id: 'DOG251', name: 'Tommy', area: 'Seven Hills / Garkheda',
-      lat: 19.871, lng: 75.362,
+      lat: 19.8710, lng: 75.3620,
       status: 'healthy', statusLabel: 'Healthy / Active',
       temp: '38.2 °C', motion: 'Running',
-      img: 'assets/realistic_dog.png', label: 'Seven Hills',
+      img: 'assets/realistic_dog.png', label: 'Tommy',
     },
     {
       id: 'DOG190', name: 'Rocky', area: 'CIDCO N-8 (Prozone)',
-      lat: 19.884, lng: 75.384,
+      lat: 19.8840, lng: 75.3840,
       status: 'healthy', statusLabel: 'Healthy / Resting',
       temp: '38.0 °C', motion: 'Sleeping',
-      img: 'assets/dog_avatar.png', label: 'CIDCO N-8',
+      img: 'assets/dog_avatar.png', label: 'Rocky',
     },
     {
       id: 'DOG089', name: 'Kalu', area: 'Satara Parisar (Beed Bypass)',
-      lat: 19.853, lng: 75.346,
+      lat: 19.8530, lng: 75.3460,
       status: 'warning', statusLabel: 'Limping Anomaly',
       temp: '39.1 °C', motion: 'Limping',
-      img: 'assets/dog_moti.png', label: 'Satara Parisar',
+      img: 'assets/dog_moti.png', label: 'Kalu',
     },
   ];
 
@@ -463,8 +480,8 @@
 
   // ── Initialise map ───────────────────────────────────────
   const map = L.map('cityLeafletMap', {
-    center: [19.876, 75.342],
-    zoom: 14,
+    center: [19.8760, 75.3420],
+    zoom: 13,
     zoomControl: false,
     attributionControl: true,
   });
@@ -491,7 +508,7 @@
             <img src="${dog.img}" alt="${dog.name}" onerror="this.src='assets/dog_avatar.png'">
           </div>
         </div>
-        <div class="dog-marker-label">${dog.label}</div>
+        <div class="dog-marker-label">${dog.name}</div>
       </div>`;
     return L.divIcon({ html, className: '', iconSize: [70, 74], iconAnchor: [35, 68] });
   }
@@ -504,6 +521,7 @@
       <div class="dog-popup">
         <div class="dog-popup-header">
           <span class="dog-popup-id">${dog.id}</span>
+          <span style="font-size:0.68rem; color:#8c7b6d; font-family:monospace;">${dog.lat.toFixed(4)}°, ${dog.lng.toFixed(4)}°</span>
         </div>
         <div class="dog-popup-name">${dog.name}</div>
         <div class="dog-popup-area">📍 ${dog.area}</div>
@@ -530,13 +548,49 @@
     leafletMarkers[dog.id] = { marker, dog };
   });
 
+  // Live Supabase DB sync for city map pins
+  const API_BASE = (window.VITE_API_BASE_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://127.0.0.1:8001' : window.location.origin)).replace(/\/$/, "");
+  fetch(`${API_BASE}/api/v1/map/dogs`)
+    .then(r => r.json())
+    .then(livePins => {
+      if (Array.isArray(livePins) && livePins.length > 0) {
+        livePins.forEach(pin => {
+          if (!pin.lat || !pin.lng) return;
+          const status = pin.health_status?.toLowerCase().includes('critical') ? 'critical'
+            : (pin.health_status?.toLowerCase().includes('observation') || pin.health_status?.toLowerCase().includes('recovery') ? 'warning' : 'healthy');
+          const d = {
+            id: pin.code || pin.id,
+            name: pin.name,
+            area: pin.area,
+            lat: pin.lat,
+            lng: pin.lng,
+            status: status,
+            statusLabel: pin.health_status || 'Healthy',
+            temp: `${pin.temperature_c || 38.5} °C`,
+            motion: pin.inferred_state || 'Moving Normally',
+            img: pin.photo_url || 'assets/dog_moti.png',
+            label: pin.name
+          };
+          if (leafletMarkers[d.id]) {
+            leafletMarkers[d.id].marker.setLatLng([d.lat, d.lng]);
+          } else {
+            const marker = L.marker([d.lat, d.lng], { icon: makeDogIcon(d) })
+              .bindPopup(makePopupHtml(d), { maxWidth: 260, minWidth: 230, closeButton: true })
+              .addTo(map);
+            leafletMarkers[d.id] = { marker, dog: d };
+          }
+        });
+      }
+    })
+    .catch(err => console.warn("Live map pins fetch fallback:", err));
+
   // ── Geofence circle (starts hidden) ─────────────────────
-  const geofenceOuter = L.circle([19.876, 75.342], {
+  const geofenceOuter = L.circle([19.8760, 75.3420], {
     radius: 3500,
     color: '#d97706', fillColor: '#d97706', fillOpacity: 0.06,
     weight: 2.5, dashArray: '8 6',
   });
-  const geofenceInner = L.circle([19.876, 75.342], {
+  const geofenceInner = L.circle([19.8760, 75.3420], {
     radius: 1800,
     color: '#10b981', fillColor: '#10b981', fillOpacity: 0.06,
     weight: 2, dashArray: '6 4',
@@ -545,11 +599,11 @@
 
   // ── Trace path polyline (starts hidden) ──────────────────
   const tracePath = L.polyline([
-    [19.868, 75.292],
-    [19.874, 75.318],
-    [19.876, 75.342],
-    [19.881, 75.362],
-    [19.884, 75.384],
+    [19.8680, 75.2920],
+    [19.8740, 75.3180],
+    [19.8760, 75.3420],
+    [19.8810, 75.3620],
+    [19.8840, 75.3840],
   ], {
     color: '#dc2626', weight: 4, opacity: 0.85, dashArray: '8 6',
   });
@@ -557,8 +611,8 @@
 
   // ── Trace waypoint markers ───────────────────────────────
   const traceWaypoints = [
-    [19.868, 75.292], [19.874, 75.318],
-    [19.876, 75.342], [19.881, 75.362], [19.884, 75.384],
+    [19.8680, 75.2920], [19.8740, 75.3180],
+    [19.8760, 75.3420], [19.8810, 75.3620], [19.8840, 75.3840],
   ].map((latlng, i) => {
     const isLast = i === 4;
     return L.circleMarker(latlng, {
@@ -608,6 +662,21 @@
     });
   };
 
+  // ── Real-Time Live Telemetry Simulation Loop ──────────────
+  setInterval(() => {
+    const dogIds = Object.keys(leafletMarkers);
+    const randomId = dogIds[Math.floor(Math.random() * dogIds.length)];
+    const entry = leafletMarkers[randomId];
+    if (entry && entry.marker) {
+      const deltaLat = (Math.random() - 0.5) * 0.0003;
+      const deltaLng = (Math.random() - 0.5) * 0.0003;
+      entry.dog.lat = Number((entry.dog.lat + deltaLat).toFixed(6));
+      entry.dog.lng = Number((entry.dog.lng + deltaLng).toFixed(6));
+      entry.marker.setLatLng([entry.dog.lat, entry.dog.lng]);
+      entry.marker.setPopupContent(makePopupHtml(entry.dog));
+    }
+  }, 3500);
+
   // ── Search input ─────────────────────────────────────────
   document.getElementById('searchInput').addEventListener('input', function () {
     const q = this.value.toLowerCase().trim();
@@ -626,9 +695,17 @@
       const first = Object.values(leafletMarkers).find(({ dog }) =>
         dog.id.toLowerCase().includes(q) || dog.name.toLowerCase().includes(q)
       );
-      if (first) map.setView([first.dog.lat, first.dog.lng], 16, { animate: true });
+      if (first) map.setView([first.dog.lat, first.dog.lng], 15, { animate: true });
     }
   });
+
+  // Handle ?dog= parameter from Dog Profile modal
+  const urlDog = new URLSearchParams(window.location.search).get('dog');
+  if (urlDog && leafletMarkers[urlDog]) {
+    const entry = leafletMarkers[urlDog];
+    map.setView([entry.dog.lat, entry.dog.lng], 15, { animate: true });
+    entry.marker.openPopup();
+  }
   </script>
 </body>
 </html>

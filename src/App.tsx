@@ -9,6 +9,8 @@ import { VetDetailsModal } from "./components/VetDetailsModal"
 import { AdminPortal } from "./components/AdminPortal"
 import { AdminLoginModal } from "./components/AdminLoginModal"
 import { fetchLiveDogs } from "./api"
+import L from "leaflet"
+import "leaflet/dist/leaflet.css"
 
 // ─── design tokens ────────────────────────────────────────────────────────────
 const T = {
@@ -482,8 +484,22 @@ function RealLiveMapSection({
   const waypointMarkersRef = useRef<any[]>([])
   const deviceMarkerRef = useRef<any>(null)
 
+  // Ensure safe trail points with real GPS coordinates
+  const safeTrailPoints = (dog.trailPoints && dog.trailPoints.length > 0 && dog.trailPoints[0].lat && dog.trailPoints[0].lat !== 0)
+    ? dog.trailPoints
+    : [
+        {
+          x: 60,
+          y: 280,
+          lat: (dog.coordinates && dog.coordinates.lat) || 19.8762,
+          lng: (dog.coordinates && dog.coordinates.lng) || 75.3433,
+          time: "Live GPS Lock",
+          label: dog.area || "Current Location",
+        },
+      ]
+
   // 24-Hour Trail Playback state
-  const [activeWaypoint, setActiveWaypoint] = useState(dog.trailPoints.length - 1)
+  const [activeWaypoint, setActiveWaypoint] = useState(safeTrailPoints.length - 1)
   const [isPlaying, setIsPlaying] = useState(false)
   const [coordsCopied, setCoordsCopied] = useState(false)
   const [deviceLocation, setDeviceLocation] = useState<{
@@ -498,7 +514,7 @@ function RealLiveMapSection({
 
   // Reset trail on dog change
   useEffect(() => {
-    setActiveWaypoint(dog.trailPoints.length - 1)
+    setActiveWaypoint(safeTrailPoints.length - 1)
     setIsPlaying(false)
   }, [dog])
 
@@ -507,20 +523,19 @@ function RealLiveMapSection({
     if (!isPlaying) return
     const interval = setInterval(() => {
       setActiveWaypoint((prev) => {
-        if (prev >= dog.trailPoints.length - 1) {
+        if (prev >= safeTrailPoints.length - 1) {
           setIsPlaying(false)
-          return dog.trailPoints.length - 1
+          return safeTrailPoints.length - 1
         }
         return prev + 1
       })
     }, 1400)
     return () => clearInterval(interval)
-  }, [isPlaying, dog])
+  }, [isPlaying, safeTrailPoints.length])
 
   // Initialize and update Leaflet Map
   useEffect(() => {
-    const L = (window as any).L
-    if (!L || !mapContainerRef.current) return
+    if (!mapContainerRef.current) return
 
     // Clean up previous map if exists
     if (mapInstanceRef.current) {
@@ -528,10 +543,17 @@ function RealLiveMapSection({
       mapInstanceRef.current = null
     }
 
-    const currentPt = dog.trailPoints[activeWaypoint] || { lat: dog.coordinates.lat, lng: dog.coordinates.lng }
+    const currentPt = safeTrailPoints[activeWaypoint] || safeTrailPoints[safeTrailPoints.length - 1] || {
+      lat: (dog.coordinates && dog.coordinates.lat) || 19.8762,
+      lng: (dog.coordinates && dog.coordinates.lng) || 75.3433,
+      label: dog.area
+    }
+
+    const centerLat = currentPt.lat || 19.8762
+    const centerLng = currentPt.lng || 75.3433
 
     const map = L.map(mapContainerRef.current, {
-      center: [currentPt.lat, currentPt.lng],
+      center: [centerLat, centerLng],
       zoom: 16,
       zoomControl: true,
       attributionControl: false,
@@ -545,7 +567,7 @@ function RealLiveMapSection({
 
     // Geofence Circle
     const geofenceColor = dog.isGeofencedSafe ? "#4a7c3a" : "#dc2626"
-    const geofence = L.circle([19.8755, 75.3435], {
+    const geofence = L.circle([centerLat, centerLng], {
       color: geofenceColor,
       fillColor: geofenceColor,
       fillOpacity: 0.07,
@@ -560,18 +582,20 @@ function RealLiveMapSection({
     geofenceCircleRef.current = geofence
 
     // 24-hr Trail Polyline
-    const trailLatLngs = dog.trailPoints.map((p) => [p.lat, p.lng])
-    const polyline = L.polyline(trailLatLngs, {
-      color: "#784920",
-      weight: 4,
-      opacity: 0.85,
-      dashArray: "8, 6",
-    }).addTo(map)
-    polylineRef.current = polyline
+    if (safeTrailPoints.length > 1) {
+      const trailLatLngs = safeTrailPoints.map((p) => [p.lat, p.lng])
+      const polyline = L.polyline(trailLatLngs, {
+        color: "#784920",
+        weight: 4,
+        opacity: 0.85,
+        dashArray: "8, 6",
+      }).addTo(map)
+      polylineRef.current = polyline
+    }
 
     // Waypoint Markers
     waypointMarkersRef.current = []
-    dog.trailPoints.forEach((pt, idx) => {
+    safeTrailPoints.forEach((pt, idx) => {
       const isCurrent = idx === activeWaypoint
       const marker = L.circleMarker([pt.lat, pt.lng], {
         radius: isCurrent ? 8 : 5,
@@ -605,11 +629,19 @@ function RealLiveMapSection({
       iconAnchor: [22, 22],
     })
 
-    const dogMarker = L.marker([currentPt.lat, currentPt.lng], { icon: dogIcon }).addTo(map)
+    const dogMarker = L.marker([centerLat, centerLng], { icon: dogIcon }).addTo(map)
     dogMarker.bindPopup(`<b>${dog.name} (${dog.code})</b><br>${dog.breed}<br>📍 ${currentPt.label || dog.area}`)
     dogMarkerRef.current = dogMarker
 
+    // Force map to compute correct dimensions immediately
+    const resizeTimer = setTimeout(() => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize()
+      }
+    }, 200)
+
     return () => {
+      clearTimeout(resizeTimer)
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove()
         mapInstanceRef.current = null
@@ -619,7 +651,7 @@ function RealLiveMapSection({
 
   // Move marker and pan smoothly when activeWaypoint changes
   useEffect(() => {
-    const currentPt = dog.trailPoints[activeWaypoint]
+    const currentPt = safeTrailPoints[activeWaypoint]
     if (!currentPt) return
 
     if (dogMarkerRef.current) {
@@ -638,7 +670,7 @@ function RealLiveMapSection({
         m.setStyle({ radius: 5, fillColor: "#c49050" })
       }
     })
-  }, [activeWaypoint, dog])
+  }, [activeWaypoint, safeTrailPoints])
 
   // My Device Geolocation
   const handleGetDeviceLocation = () => {
@@ -1032,14 +1064,15 @@ export default function App() {
               ...fallback,
               ...d,
               photo: d.photo && d.photo.trim() !== "" ? d.photo : fallback.photo,
-              coordinates: d.coordinates?.lat ? d.coordinates : fallback.coordinates,
+              coordinates: (d.coordinates?.lat && d.coordinates.lat !== 0) ? d.coordinates : fallback.coordinates,
               vetRecord: d.vetRecord || fallback.vetRecord,
               trailPoints:
-                d.trailPoints && d.trailPoints.length > 0 ? d.trailPoints : fallback.trailPoints,
+                (d.trailPoints && d.trailPoints.length > 0 && d.trailPoints[0].lat && d.trailPoints[0].lat !== 0) ? d.trailPoints : fallback.trailPoints,
             }
           })
           setDogs(enriched)
-          setActiveDog(enriched[0])
+          const motiDog = enriched.find((d) => d.code === "DOG042" || d.name.toLowerCase() === "moti") || enriched[0]
+          setActiveDog(motiDog)
         }
       })
       .catch((err) => {

@@ -270,16 +270,23 @@ function initMultiStepRegistration() {
   const dropzone = document.getElementById('photoDropzone');
 
   if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
+    nextBtn.addEventListener('click', async () => {
       if (currentStep < 5) {
         currentStep++;
         updateStepUI();
       } else {
-        // Final submit
-        addNewDogRecord();
-        currentStep = 1;
-        updateStepUI();
-        alert('Dog registered successfully into Aurangabad Municipal Database!');
+        // Final submit: persist to database and return back to Step 1
+        const originalText = nextBtn.textContent;
+        nextBtn.disabled = true;
+        nextBtn.textContent = 'Saving to Database...';
+        try {
+          await addNewDogRecord();
+        } finally {
+          nextBtn.disabled = false;
+          nextBtn.textContent = originalText;
+          currentStep = 1;
+          updateStepUI();
+        }
       }
     });
   }
@@ -431,6 +438,21 @@ async function addNewDogRecord() {
     });
     if (res.ok) {
       alert(`Dog "${dogName}" registered successfully into Supabase database!`);
+      // Reset inputs & preview back to Step 1 initial state
+      const dogNameInput = document.getElementById('regDogName');
+      if (dogNameInput) dogNameInput.value = '';
+      const photoInput = document.getElementById('dogPhotoInput');
+      if (photoInput) photoInput.value = '';
+      const photoPreviewContainer = document.getElementById('photoPreviewContainer');
+      if (photoPreviewContainer) photoPreviewContainer.style.display = 'none';
+      const dropzone = document.getElementById('photoDropzone');
+      if (dropzone) dropzone.style.display = 'block';
+      const aiBadge = document.querySelector('.ai-badge-overlay');
+      if (aiBadge) {
+        aiBadge.textContent = 'AI EfficientNet-B0 Scanning...';
+        aiBadge.style.background = 'rgba(35,23,14,0.85)';
+      }
+
       await loadLiveStatsAndDogs();
       if (typeof initRealLeafletMap === 'function') initRealLeafletMap();
     } else {
@@ -970,15 +992,30 @@ function initRealLeafletMap() {
     .then(pins => {
       pins.forEach(pin => {
         if (!pin.lat || !pin.lng) return;
-        const marker = L.marker([pin.lat, pin.lng]).addTo(realGisMap);
         const isCritical = pin.health_status && pin.health_status.toLowerCase().includes('critical');
         const isWarning = pin.health_status && (pin.health_status.toLowerCase().includes('observation') || pin.health_status.toLowerCase().includes('recovery'));
         const statusColor = isCritical ? '#ef4444' : isWarning ? '#d97706' : '#10b981';
         
+        // Visible Dog Name Pin
+        const dogNameIcon = L.divIcon({
+          className: 'dog-map-name-pin',
+          html: `
+            <div style="display:flex; flex-direction:column; align-items:center; transform:translate(-50%, -100%); cursor:pointer;">
+              <div style="background:${statusColor}; color:#fff; font-weight:800; font-size:11px; padding:3px 9px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.3); white-space:nowrap; border:1.5px solid #fff;">
+                🐾 ${pin.name}
+              </div>
+              <div style="width:12px; height:12px; background:${statusColor}; border:2px solid #fff; border-radius:50%; box-shadow:0 2px 4px rgba(0,0,0,0.3); margin-top:1px;"></div>
+            </div>
+          `,
+          iconSize: [0, 0]
+        });
+
+        const marker = L.marker([pin.lat, pin.lng], { icon: dogNameIcon }).addTo(realGisMap);
+        
         marker.bindPopup(`
           <div style="font-family: 'Plus Jakarta Sans', sans-serif; padding: 4px; font-size: 13px;">
             <strong style="color: #5c3818; font-size: 14px;">📍 ${pin.name} (${pin.code || pin.id})</strong><br>
-            <span style="color: #666;">📍 ${pin.area}</span><br>
+            <span style="color: #666;">📍 Area: ${pin.area}</span><br>
             <span style="font-weight: 700; color: ${statusColor};">Status: ${pin.health_status}</span><br>
             <small style="color: #888;">Battery: ${pin.battery_percent}% · Temp: ${pin.temperature_c}°C</small>
           </div>

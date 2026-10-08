@@ -2,9 +2,9 @@ import { DogProfile } from "../types"
 
 export const CAMPUS_DOGS: DogProfile[] = [
   {
-    id: "bruno",
+    id: "moti",
     code: "DOG042",
-    name: "Bruno",
+    name: "Moti",
     photo: "https://images.unsplash.com/photo-1657110605851-ebd3a5fcf650?w=600&h=600&fit=crop&auto=format",
     breed: "Indian Pariah",
     breedConfidence: 96,
