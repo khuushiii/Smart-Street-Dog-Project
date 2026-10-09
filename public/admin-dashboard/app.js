@@ -3,7 +3,7 @@
    Aurangabad Municipal Corporation - Smart Street Dog IoT & AI System
    ========================================================================== */
 
-const API_BASE = (window.VITE_API_BASE_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://127.0.0.1:8001' : window.location.origin)).replace(/\/$/, "");
+const API_BASE = "https://smart-collar-khushi-backend-code-2.onrender.com";
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initUserProfileDropdown();
   loadStoredCitizenIncidents();
   loadLiveStatsAndDogs();
+  setInterval(loadLiveStatsAndDogs, 3000);
+
 });
 
 /* --------------------------------------------------------------------------
@@ -27,7 +29,7 @@ async function loadLiveStatsAndDogs() {
     const statsRes = await fetch(`${API_BASE}/api/v1/dashboard/stats`);
     if (statsRes.ok) {
       const stats = await statsRes.json();
-      
+
       const totalDogsEl = document.getElementById('kpiTotalDogs');
       if (totalDogsEl) totalDogsEl.textContent = stats.total_dogs;
 
@@ -111,8 +113,8 @@ function renderLiveDogsTable(dogs) {
 
   tbody.innerHTML = dogs.map(dog => {
     const isVax = dog.vetRecord && dog.vetRecord.vaccineBatch;
-    const vaxBadge = isVax 
-      ? '<span class="status-indicator healthy">● Vaccinated</span>' 
+    const vaxBadge = isVax
+      ? '<span class="status-indicator healthy">● Vaccinated</span>'
       : '<span class="status-indicator warning">● Pending Vax</span>';
     const photo = dog.photo || 'assets/dog_moti.png';
 
@@ -160,7 +162,7 @@ function renderLiveDogsTable(dogs) {
    -------------------------------------------------------------------------- */
 function initUserProfileDropdown() {
   const profileWidgets = document.querySelectorAll('.user-profile');
-  
+
   profileWidgets.forEach(widget => {
     if (widget.dataset.dropdownInit) return;
     widget.dataset.dropdownInit = 'true';
@@ -1020,7 +1022,7 @@ function initRealLeafletMap() {
   mapContainer.innerHTML = '';
 
   if (realGisMap) {
-    try { realGisMap.remove(); } catch(e){}
+    try { realGisMap.remove(); } catch (e) { }
     realGisMap = null;
   }
 
@@ -1043,7 +1045,7 @@ function initRealLeafletMap() {
         const isCritical = pin.health_status && pin.health_status.toLowerCase().includes('critical');
         const isWarning = pin.health_status && (pin.health_status.toLowerCase().includes('observation') || pin.health_status.toLowerCase().includes('recovery'));
         const statusColor = isCritical ? '#ef4444' : isWarning ? '#d97706' : '#10b981';
-        
+
         // Visible Dog Name Pin
         const dogNameIcon = L.divIcon({
           className: 'dog-map-name-pin',
@@ -1059,7 +1061,7 @@ function initRealLeafletMap() {
         });
 
         const marker = L.marker([pin.lat, pin.lng], { icon: dogNameIcon }).addTo(realGisMap);
-        
+
         marker.bindPopup(`
           <div style="font-family: 'Plus Jakarta Sans', sans-serif; padding: 4px; font-size: 13px;">
             <strong style="color: #5c3818; font-size: 14px;">📍 ${pin.name} (${pin.code || pin.id})</strong><br>
