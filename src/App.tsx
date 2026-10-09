@@ -1048,50 +1048,36 @@ export default function App() {
   const [viewMode, setViewMode] = useState<ViewMode>("citizen")
   const [dogs, setDogs] = useState<DogProfile[]>(CAMPUS_DOGS)
   const [activeDog, setActiveDog] = useState<DogProfile>(CAMPUS_DOGS[0])
-  const [isSyncing, setIsSyncing] = useState(false)  // Live Supabase integration via FastAPI backend (polling every 3.5s for real-time collar updates)
-  useEffect(() => {
-    let isMounted = true
-    const loadDogs = () => {
-      fetchLiveDogs()
-        .then((liveDogs) => {
-          if (!isMounted) return
-          if (liveDogs && liveDogs.length > 0) {
-            const enriched = liveDogs.map((d, index) => {
-              const fallback =
-                CAMPUS_DOGS.find(
-                  (c) => c.code.toLowerCase() === d.code.toLowerCase() || c.id === d.id
-                ) || CAMPUS_DOGS[index % CAMPUS_DOGS.length]
-              return {
-                ...fallback,
-                ...d,
-                photo: d.photo && d.photo.trim() !== "" ? d.photo : fallback.photo,
-                coordinates: (d.coordinates?.lat && d.coordinates.lat !== 0) ? d.coordinates : fallback.coordinates,
-                vetRecord: d.vetRecord || fallback.vetRecord,
-                trailPoints:
-                  (d.trailPoints && d.trailPoints.length > 0 && d.trailPoints[0].lat && d.trailPoints[0].lat !== 0) ? d.trailPoints : fallback.trailPoints,
-              }
-            })
-            setDogs(enriched)
-            setActiveDog((prevActive) => {
-              if (!prevActive) {
-                return enriched.find((d) => d.code === "DOG042" || d.name.toLowerCase() === "moti") || enriched[0]
-              }
-              const updated = enriched.find((d) => d.id === prevActive.id || d.code === prevActive.code)
-              return updated ? { ...prevActive, ...updated } : prevActive
-            })
-          }
-        })
-        .catch((err) => {
-          console.warn("Backend live dogs fetch fallback:", err)
-        })
-    }
+  const [isSyncing, setIsSyncing] = useState(false)
 
-    loadDogs()
-    const timer = setInterval(loadDogs, 3500)
-    return () => {
-      isMounted = false
-      clearInterval(timer)
-    }
+  // Live Supabase integration via FastAPI backend
+  useEffect(() => {
+    fetchLiveDogs()
+      .then((liveDogs) => {
+        if (liveDogs && liveDogs.length > 0) {
+          const enriched = liveDogs.map((d, index) => {
+            const fallback =
+              CAMPUS_DOGS.find(
+                (c) => c.code.toLowerCase() === d.code.toLowerCase() || c.id === d.id
+              ) || CAMPUS_DOGS[index % CAMPUS_DOGS.length]
+            return {
+              ...fallback,
+              ...d,
+              photo: d.photo && d.photo.trim() !== "" ? d.photo : fallback.photo,
+              coordinates: (d.coordinates?.lat && d.coordinates.lat !== 0) ? d.coordinates : fallback.coordinates,
+              vetRecord: d.vetRecord || fallback.vetRecord,
+              trailPoints:
+                (d.trailPoints && d.trailPoints.length > 0 && d.trailPoints[0].lat && d.trailPoints[0].lat !== 0) ? d.trailPoints : fallback.trailPoints,
+            }
+          })
+          setDogs(enriched)
+          const motiDog = enriched.find((d) => d.code === "DOG042" || d.name.toLowerCase() === "moti") || enriched[0]
+          setActiveDog(motiDog)
+        }
+      })
+      .catch((err) => {
+        console.warn("Backend live dogs fetch fallback:", err)
+      })
   }, [])
 
   // Modals state
