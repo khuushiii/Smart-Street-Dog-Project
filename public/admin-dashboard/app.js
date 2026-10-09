@@ -1,7 +1,5 @@
-/* ==========================================================================
    SMARTDOG IDENTIFICATION SYSTEM - APPLICATION LOGIC
    Aurangabad Municipal Corporation - Smart Street Dog IoT & AI System
-   ========================================================================== */
 
 const API_BASE = "https://smart-collar-khushi-backend-code-2.onrender.com";
 

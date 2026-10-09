@@ -3,7 +3,7 @@
    Aurangabad Municipal Corporation - Smart Street Dog IoT & AI System
    ========================================================================== */
 
-const API_BASE = (window.VITE_API_BASE_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://127.0.0.1:8001' : window.location.origin)).replace(/\/$/, "");
+const API_BASE = (window.VITE_API_BASE_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'https://smart-collar-khushi-backend-code-2.onrender.com' : window.location.origin)).replace(/\/$/, "");
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavigation();

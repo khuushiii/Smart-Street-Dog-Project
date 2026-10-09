@@ -53,6 +53,8 @@ def _build_dog_response(dog: Dog, vet: VetRecord | None, trails: list) -> DogPub
         lastUpdateTimestamp=dog.last_update_timestamp or "",
         isGeofencedSafe=dog.is_geofenced_safe,
         specialNotes=dog.special_notes or "",
+        barkEmotion=getattr(dog, 'bark_emotion', 'Playful / Happy'),
+        movementState=getattr(dog, 'movement_state', 'Moving Normally'),
         trailPoints=trail_schemas,
         vetRecord=vet_schema,
     )

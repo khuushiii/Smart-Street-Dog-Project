@@ -72,6 +72,8 @@ class DogPublicResponse(BaseModel):
     lastUpdateTimestamp: str
     isGeofencedSafe: bool
     specialNotes: str
+    barkEmotion: str = 'Playful / Happy'
+    movementState: str = 'Moving Normally'
     trailPoints: List[TrailPointSchema] = []
     vetRecord: VetRecordSchema = VetRecordSchema()
 

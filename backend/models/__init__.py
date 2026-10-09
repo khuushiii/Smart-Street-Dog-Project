@@ -6,3 +6,5 @@ from models.alert import Alert
 from models.trail_point import TrailPoint
 
 __all__ = ["Dog", "VetRecord", "IncidentReport", "AdminUser", "Alert", "TrailPoint"]
+
+from models.telemetry_ai import CollarRawTelemetry, AIModelPrediction

@@ -11,6 +11,8 @@ class Dog(Base):
     qr_hash = Column(String, unique=True, index=True)       # e.g. "QR042MOTI"
     name = Column(String, nullable=False)
     photo_url = Column(String, default="")
+    bark_emotion = Column(String, default='Playful / Happy')
+    movement_state = Column(String, default='Moving Normally')
     breed = Column(String, default="Indian Pariah")
     breed_confidence = Column(Float, default=96.4)
     gender = Column(String, default="Male")                 # Male | Female
@@ -40,3 +42,5 @@ class Dog(Base):
 
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+# test append
+
