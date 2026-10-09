@@ -1,4 +1,4 @@
-"""
+﻿"""
 AI Service Integration
 ----------------------
 Connects SmartDog Backend to the real PyTorch AI Server (dog-ai-server):
@@ -18,7 +18,7 @@ class AIService:
     def __init__(self, base_url: str = AI_SERVICE_URL):
         self.base_url = base_url.rstrip("/")
 
-    # ── Bark / Audio Classification ─────────────────────────────────────────
+    # ── Bark / Audio Classification ──────────────────────────────────────────
     def classify_audio(self, wav_bytes: bytes) -> dict:
         """Call real PyTorch Bark Classifier or fallback to simulation."""
         url = f"{self.base_url}/predict/bark"
@@ -27,8 +27,9 @@ class AIService:
             resp = requests.post(url, files=files, timeout=6.0)
             if resp.status_code == 200:
                 data = resp.json()
-                label = data.get("display_name", data.get("class_name", "Barking Detected"))
-                prob = round(data.get("confidence", 85.0) / 100.0, 3)
+                label = data.get("display_name", data.get("class_name", "Playful / Happy"))
+                conf = float(data.get("confidence", 85.0))
+                prob = round(conf / 100.0 if conf > 1.0 else conf, 3)
                 return {
                     "label": label,
                     "probability": prob,
@@ -41,15 +42,15 @@ class AIService:
 
         # Fallback simulation
         fallback_classes = [
-            ("Distress Barking", 0.948, "Pain Bark (Simulated)"),
-            ("Aggressive Barking", 0.871, "Aggression / Territory (Simulated)"),
-            ("Playful Bark", 0.763, "Playful / Excited (Simulated)"),
-            ("Howling", 0.812, "Loneliness / Night Call (Simulated)"),
+            ("Panic / Distress", 0.948, "Distress bark detected"),
+            ("Aggressive / Guard Barking", 0.871, "Aggression / Territory bark"),
+            ("Playful / Happy", 0.763, "Playful / Excited bark"),
+            ("Isolation / Whining", 0.812, "Loneliness / Whining"),
         ]
         label, prob, description = random.choice(fallback_classes)
         return {
             "label": label,
-            "probability": round(prob + random.uniform(-0.05, 0.05), 3),
+            "probability": round(prob, 3),
             "description": description,
             "model": "Simulation-Fallback",
         }
@@ -57,7 +58,6 @@ class AIService:
     # ── Gait Anomaly & Movement Detection ────────────────────────────────────
     def analyze_gait(self, movement: dict) -> dict:
         """Call real 1D-CNN Movement Model if readings provided, or analyze IMU stats."""
-        # If raw MPU-6050 readings are included in movement payload
         readings = movement.get("readings")
         if readings and len(readings) >= 10:
             url = f"{self.base_url}/predict/movement"
@@ -65,12 +65,12 @@ class AIService:
                 resp = requests.post(url, json={"readings": readings}, timeout=4.0)
                 if resp.status_code == 200:
                     data = resp.json()
-                    state = data.get("class_name", "resting").lower()
-                    conf = data.get("confidence", 90.0)
-                    anomaly = state in ["abnormal", "limping", "shaking"]
+                    state = data.get("display_name", data.get("class_name", "Moving Normally"))
+                    conf = float(data.get("confidence", 90.0))
+                    anomaly = any(w in state.lower() for w in ["limping", "injured", "agitated", "erratic", "shaking"])
                     return {
                         "anomaly_detected": anomaly,
-                        "rms_value": round(movement.get("accel_max_g", 1.0), 3),
+                        "rms_value": round(float(movement.get("accel_max_g") or 1.0), 3),
                         "gait_state": state,
                         "confidence": conf,
                         "model": "1D-CNN Movement (Real AI)",
@@ -79,13 +79,15 @@ class AIService:
                 print(f"[AIService] Movement AI call failed ({e}). Falling back to heuristic.")
 
         # Heuristic gait anomaly check from collar stats
-        rms = movement.get("accel_max_g", 1.0)
-        variance = movement.get("accel_variance", 0.05)
+        rms = float(movement.get("accel_max_g") or 1.0)
+        variance = float(movement.get("accel_variance") or 0.05)
         anomaly = variance > 0.12 or rms > 2.0
+        gait_state = "Possibly Injured / Limping" if anomaly else "Moving Normally"
         return {
             "anomaly_detected": anomaly,
             "rms_value": round(rms, 3),
-            "gait_state": "limping" if anomaly else movement.get("inferred_state", "normal"),
+            "gait_state": gait_state,
+            "confidence": 88.0,
             "model": "Statistical-Heuristic",
         }
 
@@ -99,7 +101,7 @@ class AIService:
             if resp.status_code == 200:
                 data = resp.json()
                 breed = data.get("display_name", data.get("class_name", "Indian Pariah"))
-                conf = data.get("confidence", 90.0)
+                conf = float(data.get("confidence", 90.0))
                 return {
                     "breed": breed,
                     "confidence": conf,
@@ -113,13 +115,13 @@ class AIService:
         breeds = [
             ("Indian Pariah", 96.4),
             ("Indian Spitz", 91.2),
-            ("Labrador Mix", 83.5),
-            ("German Shepherd Mix", 79.1),
+            ("Mixed Mutt", 83.5),
+            ("Pedigree Stray", 79.1),
         ]
         breed, confidence = random.choice(breeds)
         return {
             "breed": breed,
-            "confidence": round(confidence + random.uniform(-3, 3), 1),
+            "confidence": round(confidence + random.uniform(-1, 1), 1),
             "model": "Simulation-Fallback",
         }
 
