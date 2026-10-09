@@ -1,9 +1,18 @@
 import { DogProfile, IncidentReport } from "./types"
 
-// Dynamic API Base URL: connects to local FastAPI on port 8001 during dev,
-// or custom backend URL when deployed to production (e.g. AWS).
+// Dynamic API Base URL:
+// On Vercel, uses relative path "" to leverage vercel.json rewrite proxy (eliminates CORS restrictions)
+// In local dev or other environments, points to live backend-code-3 on Render
+const isBrowser = typeof window !== "undefined"
+const isVercel = isBrowser && window.location.hostname.endsWith("vercel.app")
 const rawEnv = (import.meta.env.VITE_API_BASE_URL || "").trim()
-export const API_BASE = (rawEnv && !rawEnv.includes("backend-code-2") ? rawEnv : "https://smart-collar-khushi-backend-code-3.onrender.com").replace(/\/$/, "")
+
+export const API_BASE = isVercel
+  ? ""
+  : (rawEnv && !rawEnv.includes("backend-code-2")
+      ? rawEnv
+      : "https://smart-collar-khushi-backend-code-3.onrender.com"
+    ).replace(/\/$/, "")
 
 export interface DashboardStats {
   total_dogs: number
