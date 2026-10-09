@@ -2,7 +2,7 @@ import { DogProfile, IncidentReport } from "./types"
 
 // Dynamic API Base URL: connects to local FastAPI on port 8001 during dev,
 // or custom backend URL when deployed to production (e.g. AWS).
-export const API_BASE = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8001").replace(/\/$/, "")
+export const API_BASE = (import.meta.env.VITE_API_BASE_URL || "https://smart-collar-khushi-backend-code-3.onrender.com").replace(/\/$/, "")
 
 export interface DashboardStats {
   total_dogs: number

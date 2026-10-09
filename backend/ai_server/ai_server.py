@@ -196,12 +196,18 @@ def load_all_models():
 @app.post("/predict/breed")
 async def predict_breed(file: UploadFile = File(...)):
     if breed_model is None:
+        print("[BREED AI] [ERROR]: Breed model is not loaded in memory!")
         raise HTTPException(status_code=503, detail="Breed model not loaded.")
 
     try:
+        print("\n" + "=" * 65)
+        print("[BREED AI] [STEP 1/5] >>> RECEIVED DATA: Received Dog Image from Backend / ESP32-CAM")
         image_bytes = await file.read()
-        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        size_kb = round(len(image_bytes) / 1024, 2)
+        print(f"[BREED AI] Image filename: {file.filename} | Payload size: {size_kb} KB")
 
+        print("[BREED AI] [STEP 2/5] >>> PREPROCESSING: Preprocessing -> Resize (224x224), RGB, Normalizing tensor...")
+        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
         transform = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
@@ -209,25 +215,36 @@ async def predict_breed(file: UploadFile = File(...)):
         ])
         tensor = transform(image).unsqueeze(0).to(DEVICE)
 
+        print("[BREED AI] [STEP 3/5] >>> MODEL INFERENCE: Running EfficientNet-B0 inference on device...")
         with torch.no_grad():
             output = breed_model(tensor)
             probs  = torch.softmax(output, dim=1)[0]
             pred   = torch.argmax(probs).item()
 
-        class_name  = breed_classes[pred]
-        confidence  = round(probs[pred].item() * 100, 2)
-        all_probs   = {breed_classes[i]: round(probs[i].item() * 100, 2)
-                       for i in range(len(breed_classes))}
+        class_name   = breed_classes[pred]
+        display_name = class_name.replace("_", " ")
+        confidence   = round(probs[pred].item() * 100, 2)
+        all_probs    = {breed_classes[i]: round(probs[i].item() * 100, 2)
+                        for i in range(len(breed_classes))}
+
+        print(f"[BREED AI] [STEP 4/5] >>> PREDICTION OUTPUT: Classification Completed:")
+        print(f"            -> Predicted Breed : {display_name} ({class_name})")
+        print(f"            -> Confidence      : {confidence}%")
+        print(f"            -> All Classes     : {all_probs}")
+        print(f"[BREED AI] [STEP 5/5] >>> RETURNING RESPONSE: Returning JSON response to Backend -> Status 200 OK")
+        print("=" * 65 + "\n")
 
         return JSONResponse({
             "model"       : "breed_classification",
             "class_name"  : class_name,
-            "display_name": class_name.replace("_", " "),
+            "display_name": display_name,
             "confidence"  : confidence,
             "all_probs"   : all_probs
         })
 
     except Exception as e:
+        print(f"[BREED AI] [EXCEPTION]: during breed processing: {e}")
+        print("=" * 65 + "\n")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -240,14 +257,21 @@ async def predict_breed(file: UploadFile = File(...)):
 @app.post("/predict/bark")
 async def predict_bark(file: UploadFile = File(...)):
     if bark_model is None:
+        print("[BARK AI] [ERROR]: Bark model is not loaded in memory!")
         raise HTTPException(status_code=503, detail="Bark model not loaded.")
 
     try:
+        print("\n" + "=" * 65)
+        print("[BARK AI] [STEP 1/6] >>> RECEIVED DATA: Audio Payload from Backend / INMP441 Collar")
         audio_bytes = await file.read()
+        size_kb = round(len(audio_bytes) / 1024, 2)
+        print(f"[BARK AI] Audio filename: {file.filename} | Payload size: {size_kb} KB")
+
+        print("[BARK AI] [STEP 2/6] >>> PREPROCESSING: Audio waveform (librosa sr=22050, 5.0s clip)...")
         audio_buf   = io.BytesIO(audio_bytes)
         y, sr       = librosa.load(audio_buf, sr=22050, duration=5.0)
 
-        # Generate Mel Spectrogram
+        print("[BARK AI] [STEP 3/6] >>> MEL SPECTROGRAM: Computing Mel Spectrogram (128 mel bins, dB scale)...")
         mel_spec = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=128)
         mel_db   = librosa.power_to_db(mel_spec, ref=np.max)
 
@@ -267,6 +291,7 @@ async def predict_bark(file: UploadFile = File(...)):
         ])
         tensor = transform(image).unsqueeze(0).to(DEVICE)
 
+        print("[BARK AI] [STEP 4/6] >>> MODEL INFERENCE: Running Bark Spectrogram Classifier on device...")
         with torch.no_grad():
             output = bark_model(tensor)
             probs  = torch.softmax(output, dim=1)[0]
@@ -278,6 +303,14 @@ async def predict_bark(file: UploadFile = File(...)):
         all_probs    = {bark_classes[i]: round(probs[i].item() * 100, 2)
                         for i in range(len(bark_classes))}
 
+        print(f"[BARK AI] [STEP 5/6] >>> PREDICTION OUTPUT: Bark Emotion Classification Result:")
+        print(f"            -> Raw Class    : {class_name}")
+        print(f"            -> Bark Emotion : {display_name}")
+        print(f"            -> Confidence   : {confidence}%")
+        print(f"            -> Probabilities: {all_probs}")
+        print(f"[BARK AI] [STEP 6/6] >>> RETURNING RESPONSE: Sending prediction back to Backend -> Status 200 OK")
+        print("=" * 65 + "\n")
+
         return JSONResponse({
             "model"       : "bark_analysis",
             "class_name"  : class_name,
@@ -287,6 +320,8 @@ async def predict_bark(file: UploadFile = File(...)):
         })
 
     except Exception as e:
+        print(f"[BARK AI] [EXCEPTION]: during bark processing: {e}")
+        print("=" * 65 + "\n")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -319,12 +354,18 @@ class MovementRequest(BaseModel):
 @app.post("/predict/movement")
 async def predict_movement(request: MovementRequest):
     if movement_model is None:
+        print("[MOVEMENT AI] [ERROR]: Movement model is not loaded in memory!")
         raise HTTPException(status_code=503, detail="Movement model not loaded.")
 
     readings = request.readings
     if len(readings) < 10:
+        print(f"[MOVEMENT AI] [WARNING] Rejecting payload: Expected at least 10 readings, got {len(readings)}.")
         raise HTTPException(status_code=400,
             detail=f"Need at least 10 readings. Got {len(readings)}.")
+
+    print("\n" + "=" * 65)
+    print(f"[MOVEMENT AI] [STEP 1/5] >>> RECEIVED DATA: Received MPU-6050 Motion Packet from Backend")
+    print(f"[MOVEMENT AI] Input sample count: {len(readings)} raw accelerometer/gyro readings")
 
     # If less than 100 readings, pad with repetition
     while len(readings) < 100:
@@ -332,11 +373,13 @@ async def predict_movement(request: MovementRequest):
     readings = readings[:100]
 
     try:
+        print("[MOVEMENT AI] [STEP 2/5] >>> PREPROCESSING: Preprocessing -> Normalizing 6-axis IMU window (ax,ay,az,gx,gy,gz)...")
         window = [[r.ax, r.ay, r.az, r.gx, r.gy, r.gz] for r in readings]
         arr    = np.array(window, dtype=np.float32)
         arr    = (arr - movement_mean) / (movement_std + 1e-8)
         tensor = torch.tensor(arr.T).unsqueeze(0).to(DEVICE)
 
+        print("[MOVEMENT AI] [STEP 3/5] >>> MODEL INFERENCE: Running 1D-CNN Gait & Activity Classifier on device...")
         with torch.no_grad():
             output = movement_model(tensor)
             probs  = torch.softmax(output, dim=1)[0]
@@ -348,6 +391,14 @@ async def predict_movement(request: MovementRequest):
         all_probs    = {movement_classes[i]: round(probs[i].item() * 100, 2)
                         for i in range(len(movement_classes))}
 
+        print(f"[MOVEMENT AI] [STEP 4/5] >>> PREDICTION OUTPUT: Movement / Gait Result:")
+        print(f"               -> Raw Class     : {class_name}")
+        print(f"               -> Movement State: {display_name}")
+        print(f"               -> Confidence    : {confidence}%")
+        print(f"               -> All Classes   : {all_probs}")
+        print(f"[MOVEMENT AI] [STEP 5/5] >>> RETURNING RESPONSE: Sending prediction back to Backend -> Status 200 OK")
+        print("=" * 65 + "\n")
+
         return JSONResponse({
             "model"       : "movement_detection",
             "class_name"  : class_name,
@@ -357,6 +408,8 @@ async def predict_movement(request: MovementRequest):
         })
 
     except Exception as e:
+        print(f"[MOVEMENT AI] [EXCEPTION]: during movement processing: {e}")
+        print("=" * 65 + "\n")
         raise HTTPException(status_code=500, detail=str(e))
 
 

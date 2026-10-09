@@ -26,6 +26,8 @@ ALLOWED_ORIGINS = [
     "http://localhost:8443",
     "http://127.0.0.1:8443",
     "https://smart-street-dog-project-updated.vercel.app",
+    "https://smart-street-dog-project.vercel.app",
+    "*",
     "null",
 ]
 

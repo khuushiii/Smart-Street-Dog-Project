@@ -59,6 +59,16 @@ class AIService:
     def analyze_gait(self, movement: dict) -> dict:
         """Call real 1D-CNN Movement Model if readings provided, or analyze IMU stats."""
         readings = movement.get("readings")
+        if not readings:
+            ax = float(movement.get("accel_x") or 0.0)
+            ay = float(movement.get("accel_y") or 0.0)
+            az = float(movement.get("accel_z") or 0.0)
+            gx = float(movement.get("gyro_x") or 0.0)
+            gy = float(movement.get("gyro_y") or 0.0)
+            gz = float(movement.get("gyro_z") or 0.0)
+            if ax != 0.0 or ay != 0.0 or az != 0.0 or gx != 0.0 or gy != 0.0 or gz != 0.0:
+                readings = [{"ax": ax, "ay": ay, "az": az, "gx": gx, "gy": gy, "gz": gz}] * 10
+
         if readings and len(readings) >= 10:
             url = f"{self.base_url}/predict/movement"
             try:
